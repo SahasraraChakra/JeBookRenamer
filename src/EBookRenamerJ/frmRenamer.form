@@ -534,13 +534,190 @@
         <Component class="javax.swing.JComboBox" name="cboLanguage">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="6">
-                <StringItem index="0" value="English_EN"/>
+              <StringArray count="183">
+                <StringItem index="0" value="Sanskrit_SA"/>
                 <StringItem index="1" value="Malayalam_ML"/>
                 <StringItem index="2" value="Tamil_TA"/>
                 <StringItem index="3" value="Hindi_HI"/>
-                <StringItem index="4" value="Russian_RU"/>
-                <StringItem index="5" value="French_FR"/>
+                <StringItem index="4" value="English_EN"/>
+                <StringItem index="5" value="Abkhazian_AB"/>
+                <StringItem index="6" value="Afar_AA"/>
+                <StringItem index="7" value="Afrikaans_AF"/>
+                <StringItem index="8" value="Akan_AK"/>
+                <StringItem index="9" value="Albanian_SQ"/>
+                <StringItem index="10" value="Amharic_AM"/>
+                <StringItem index="11" value="Arabic_AR"/>
+                <StringItem index="12" value="Aragonese_AN"/>
+                <StringItem index="13" value="Armenian_HY"/>
+                <StringItem index="14" value="Assamese_AS"/>
+                <StringItem index="15" value="Avaric_AV"/>
+                <StringItem index="16" value="Avestan_AE"/>
+                <StringItem index="17" value="Aymara_AY"/>
+                <StringItem index="18" value="Azerbaijani_AZ"/>
+                <StringItem index="19" value="Bambara_BM"/>
+                <StringItem index="20" value="Bashkir_BA"/>
+                <StringItem index="21" value="Basque_EU"/>
+                <StringItem index="22" value="Belarusian_BE"/>
+                <StringItem index="23" value="Bengali_BN"/>
+                <StringItem index="24" value="Bislama_BI"/>
+                <StringItem index="25" value="Bosnian_BS"/>
+                <StringItem index="26" value="Breton_BR"/>
+                <StringItem index="27" value="Bulgarian_BG"/>
+                <StringItem index="28" value="Burmese_MY"/>
+                <StringItem index="29" value="Catalan, Valencian_CA"/>
+                <StringItem index="30" value="Chamorro_CH"/>
+                <StringItem index="31" value="Chechen_CE"/>
+                <StringItem index="32" value="Chichewa, Chewa, Nyanja_NY"/>
+                <StringItem index="33" value="Chinese_ZH"/>
+                <StringItem index="34" value="Church&#xa0;Slavonic_CU"/>
+                <StringItem index="35" value="Chuvash_CV"/>
+                <StringItem index="36" value="Cornish_KW"/>
+                <StringItem index="37" value="Corsican_CO"/>
+                <StringItem index="38" value="Cree_CR"/>
+                <StringItem index="39" value="Croatian_HR"/>
+                <StringItem index="40" value="Czech_CS"/>
+                <StringItem index="41" value="Danish_DA"/>
+                <StringItem index="42" value="Divehi, Dhivehi, Maldivian_DV"/>
+                <StringItem index="43" value="Dutch,&#xa0;Flemish_NL"/>
+                <StringItem index="44" value="Dzongkha_DZ"/>
+                <StringItem index="45" value="Esperanto_EO"/>
+                <StringItem index="46" value="Estonian_ET"/>
+                <StringItem index="47" value="Ewe_EE"/>
+                <StringItem index="48" value="Faroese_FO"/>
+                <StringItem index="49" value="Fijian_FJ"/>
+                <StringItem index="50" value="Finnish_FI"/>
+                <StringItem index="51" value="French_FR"/>
+                <StringItem index="52" value="Western Frisian_FY"/>
+                <StringItem index="53" value="Fulah_FF"/>
+                <StringItem index="54" value="Gaelic, Scottish&#xa0;Gaelic_GD"/>
+                <StringItem index="55" value="Galician_GL"/>
+                <StringItem index="56" value="Ganda_LG"/>
+                <StringItem index="57" value="Georgian_KA"/>
+                <StringItem index="58" value="German_DE"/>
+                <StringItem index="59" value="Greek, Modern&#xa0;(1453&#x2013;)_EL"/>
+                <StringItem index="60" value="Kalaallisut, Greenlandic_KL"/>
+                <StringItem index="61" value="Guarani_GN"/>
+                <StringItem index="62" value="Gujarati_GU"/>
+                <StringItem index="63" value="Haitian, Haitian&#xa0;Creole_HT"/>
+                <StringItem index="64" value="Hausa_HA"/>
+                <StringItem index="65" value="Hebrew_HE"/>
+                <StringItem index="66" value="Herero_HZ"/>
+                <StringItem index="67" value="Hiri Motu_HO"/>
+                <StringItem index="68" value="Hungarian_HU"/>
+                <StringItem index="69" value="Icelandic_IS"/>
+                <StringItem index="70" value="Ido_IO"/>
+                <StringItem index="71" value="Igbo_IG"/>
+                <StringItem index="72" value="Indonesian_ID"/>
+                <StringItem index="73" value="Interlingua&#xa0;(IALA)_IA"/>
+                <StringItem index="74" value="Interlingue, Occidental_IE"/>
+                <StringItem index="75" value="Inuktitut_IU"/>
+                <StringItem index="76" value="Inupiaq_IK"/>
+                <StringItem index="77" value="Irish_GA"/>
+                <StringItem index="78" value="Italian_IT"/>
+                <StringItem index="79" value="Japanese_JA"/>
+                <StringItem index="80" value="Javanese_JV"/>
+                <StringItem index="81" value="Kannada_KN"/>
+                <StringItem index="82" value="Kanuri_KR"/>
+                <StringItem index="83" value="Kashmiri_KS"/>
+                <StringItem index="84" value="Kazakh_KK"/>
+                <StringItem index="85" value="Central Khmer_KM"/>
+                <StringItem index="86" value="Kikuyu, Gikuyu_KI"/>
+                <StringItem index="87" value="Kinyarwanda_RW"/>
+                <StringItem index="88" value="Kyrgyz, Kirghiz_KY"/>
+                <StringItem index="89" value="Komi_KV"/>
+                <StringItem index="90" value="Kongo_KG"/>
+                <StringItem index="91" value="Korean_KO"/>
+                <StringItem index="92" value="Kuanyama, Kwanyama_KJ"/>
+                <StringItem index="93" value="Kurdish_KU"/>
+                <StringItem index="94" value="Lao_LO"/>
+                <StringItem index="95" value="Latin_LA"/>
+                <StringItem index="96" value="Latvian_LV"/>
+                <StringItem index="97" value="Limburgan, Limburger, Limburgish_LI"/>
+                <StringItem index="98" value="Lingala_LN"/>
+                <StringItem index="99" value="Lithuanian_LT"/>
+                <StringItem index="100" value="Luba-Katanga_LU"/>
+                <StringItem index="101" value="Luxembourgish, Letzeburgesch_LB"/>
+                <StringItem index="102" value="Macedonian_MK"/>
+                <StringItem index="103" value="Malagasy_MG"/>
+                <StringItem index="104" value="Malay_MS"/>
+                <StringItem index="105" value="Maltese_MT"/>
+                <StringItem index="106" value="Manx_GV"/>
+                <StringItem index="107" value="Maori_MI"/>
+                <StringItem index="108" value="Marathi_MR"/>
+                <StringItem index="109" value="Marshallese_MH"/>
+                <StringItem index="110" value="Mongolian_MN"/>
+                <StringItem index="111" value="Nauru_NA"/>
+                <StringItem index="112" value="Navajo, Navaho_NV"/>
+                <StringItem index="113" value="North Ndebele_ND"/>
+                <StringItem index="114" value="South Ndebele_NR"/>
+                <StringItem index="115" value="Ndonga_NG"/>
+                <StringItem index="116" value="Nepali_NE"/>
+                <StringItem index="117" value="Norwegian_NO"/>
+                <StringItem index="118" value="Norwegian Bokm&#xe5;l_NB"/>
+                <StringItem index="119" value="Norwegian Nynorsk_NN"/>
+                <StringItem index="120" value="Occitan_OC"/>
+                <StringItem index="121" value="Ojibwa_OJ"/>
+                <StringItem index="122" value="Oriya_OR"/>
+                <StringItem index="123" value="Oromo_OM"/>
+                <StringItem index="124" value="Ossetian, Ossetic_OS"/>
+                <StringItem index="125" value="Pali_PI"/>
+                <StringItem index="126" value="Pashto, Pushto_PS"/>
+                <StringItem index="127" value="Persian_FA"/>
+                <StringItem index="128" value="Polish_PL"/>
+                <StringItem index="129" value="Portuguese_PT"/>
+                <StringItem index="130" value="Punjabi, Panjabi_PA"/>
+                <StringItem index="131" value="Quechua_QU"/>
+                <StringItem index="132" value="Romanian,&#xa0;Moldavian, Moldovan_RO"/>
+                <StringItem index="133" value="Romansh_RM"/>
+                <StringItem index="134" value="Rundi_RN"/>
+                <StringItem index="135" value="Russian_RU"/>
+                <StringItem index="136" value="Northern Sami_SE"/>
+                <StringItem index="137" value="Samoan_SM"/>
+                <StringItem index="138" value="Sango_SG"/>
+                <StringItem index="139" value="Sardinian_SC"/>
+                <StringItem index="140" value="Serbian_SR"/>
+                <StringItem index="141" value="Shona_SN"/>
+                <StringItem index="142" value="Sindhi_SD"/>
+                <StringItem index="143" value="Sinhala, Sinhalese_SI"/>
+                <StringItem index="144" value="Slovak_SK"/>
+                <StringItem index="145" value="Slovenian_SL"/>
+                <StringItem index="146" value="Somali_SO"/>
+                <StringItem index="147" value="Southern Sotho_ST"/>
+                <StringItem index="148" value="Spanish, Castilian_ES"/>
+                <StringItem index="149" value="Sundanese_SU"/>
+                <StringItem index="150" value="Swahili_SW"/>
+                <StringItem index="151" value="Swati_SS"/>
+                <StringItem index="152" value="Swedish_SV"/>
+                <StringItem index="153" value="Tagalog_TL"/>
+                <StringItem index="154" value="Tahitian_TY"/>
+                <StringItem index="155" value="Tajik_TG"/>
+                <StringItem index="156" value="Tatar_TT"/>
+                <StringItem index="157" value="Telugu_TE"/>
+                <StringItem index="158" value="Thai_TH"/>
+                <StringItem index="159" value="Tibetan_BO"/>
+                <StringItem index="160" value="Tigrinya_TI"/>
+                <StringItem index="161" value="Tonga&#xa0;(Tonga Islands)_TO"/>
+                <StringItem index="162" value="Tsonga_TS"/>
+                <StringItem index="163" value="Tswana_TN"/>
+                <StringItem index="164" value="Turkish_TR"/>
+                <StringItem index="165" value="Turkmen_TK"/>
+                <StringItem index="166" value="Twi_TW"/>
+                <StringItem index="167" value="Uighur, Uyghur_UG"/>
+                <StringItem index="168" value="Ukrainian_UK"/>
+                <StringItem index="169" value="Urdu_UR"/>
+                <StringItem index="170" value="Uzbek_UZ"/>
+                <StringItem index="171" value="Venda_VE"/>
+                <StringItem index="172" value="Vietnamese_VI"/>
+                <StringItem index="173" value="Volap&#xfc;k_VO"/>
+                <StringItem index="174" value="Walloon_WA"/>
+                <StringItem index="175" value="Welsh_CY"/>
+                <StringItem index="176" value="Wolof_WO"/>
+                <StringItem index="177" value="Xhosa_XH"/>
+                <StringItem index="178" value="Sichuan Yi, Nuosu_II"/>
+                <StringItem index="179" value="Yiddish_YI"/>
+                <StringItem index="180" value="Yoruba_YO"/>
+                <StringItem index="181" value="Zhuang, Chuang_ZA"/>
+                <StringItem index="182" value="Zulu_ZU"/>
               </StringArray>
             </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
