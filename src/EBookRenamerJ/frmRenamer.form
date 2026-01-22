@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.6" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+<Form version="1.8" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
-    <Property name="title" type="java.lang.String" value="JSoft Ebook Renamer"/>
+    <Property name="title" type="java.lang.String" value="E Book Renamer : J Soft Bharath "/>
     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
       <Font name="Inter" size="12" style="0"/>
     </Property>
     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-      <Dimension value="[1000, 620]"/>
+      <Dimension value="[1000, 600]"/>
     </Property>
     <Property name="name" type="java.lang.String" value="frmRenamer" noResource="true"/>
     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-      <Dimension value="[1000, 620]"/>
+      <Dimension value="[1000, 600]"/>
     </Property>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
     <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
+  <Events>
+    <EventHandler event="windowActivated" listener="java.awt.event.WindowListener" parameters="java.awt.event.WindowEvent" handler="formWindowActivated"/>
+  </Events>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
@@ -29,7 +32,7 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
-    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,2,108,0,0,3,-24"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,2,91,0,0,3,-24"/>
   </AuxValues>
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
@@ -37,9 +40,12 @@
     <Container class="javax.swing.JPanel" name="paneHeader">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="f7" green="f7" red="f2" type="rgb"/>
+          <Color blue="0" green="99" red="ff" type="rgb"/>
         </Property>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JPanel(){&#xa;    int width;&#xa;    protected void paintComponent(Graphics g)&#xa;    {&#xa;        super.paintComponent(g);&#xa;        Graphics2D g2d = (Graphics2D) g;&#xa;        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);&#xa;&#xa;        try{&#xa;            width = headerBgImage.getWidth()&gt;=getWidth()?&#xa;            headerBgImage.getWidth():&#xa;            getWidth();&#xa;            //draw Image&#xa;            g2d.drawImage(headerBgImage,&#xa;                0,&#xa;                0,&#xa;                getWidth(),&#xa;                getHeight(),&#xa;                null);&#xa;        }&#xa;        catch(Exception e){&#xa;        }&#xa;    }&#xa;}&#xa;"/>
+      </AuxValues>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
           <BorderConstraints direction="First"/>
@@ -49,24 +55,19 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
+              <Group type="102" attributes="0">
                   <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace pref="522" max="-2" attributes="0"/>
-                          <Component id="cmdOpenBook" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="cmdRemoveSelected" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="cmdRemoveAll" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="1" attributes="0">
-                          <Component id="cmdChooseFiles" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="cmdChooseFolder" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                      </Group>
-                  </Group>
+                  <Component id="lblAppTitle" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="180" max="32767" attributes="0"/>
+                  <Component id="cmdChooseFiles" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Component id="cmdChooseFolder" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
+                  <Component id="cmdOpenBook" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Component id="cmdRemoveSelected" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Component id="cmdRemoveAll" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -74,26 +75,35 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
-                      <Component id="cmdChooseFolder" alignment="2" min="-2" pref="30" max="-2" attributes="0"/>
-                      <Component id="cmdChooseFiles" alignment="2" min="-2" pref="30" max="-2" attributes="0"/>
-                      <Component id="cmdOpenBook" alignment="2" min="-2" pref="30" max="-2" attributes="0"/>
                       <Component id="cmdRemoveSelected" alignment="2" min="-2" pref="30" max="-2" attributes="0"/>
                       <Component id="cmdRemoveAll" alignment="2" min="-2" pref="30" max="-2" attributes="0"/>
+                      <Component id="cmdChooseFiles" alignment="2" min="-2" pref="30" max="-2" attributes="0"/>
+                      <Component id="lblAppTitle" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="cmdOpenBook" alignment="2" min="-2" pref="30" max="-2" attributes="0"/>
+                      <Component id="cmdChooseFolder" alignment="2" min="-2" pref="30" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
       </Layout>
       <SubComponents>
+        <Component class="javax.swing.JLabel" name="lblAppTitle">
+          <Properties>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="J Soft Bharath  |  E-Book Renamer"/>
+          </Properties>
+        </Component>
         <Component class="javax.swing.JButton" name="cmdOpenBook">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/resources/icons/34-16.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Open File In System"/>
+            <Property name="text" type="java.lang.String" value="Open"/>
             <Property name="iconTextGap" type="int" value="8"/>
           </Properties>
           <Events>
@@ -117,7 +127,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/resources/icons/14-16.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Remove Selected"/>
+            <Property name="text" type="java.lang.String" value="Remove"/>
             <Property name="enabled" type="boolean" value="false"/>
             <Property name="iconTextGap" type="int" value="8"/>
           </Properties>
@@ -130,7 +140,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/resources/icons/33-16.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Remove All"/>
+            <Property name="text" type="java.lang.String" value="Clear"/>
             <Property name="enabled" type="boolean" value="false"/>
             <Property name="iconTextGap" type="int" value="8"/>
           </Properties>
@@ -155,7 +165,7 @@
     <Container class="javax.swing.JPanel" name="paneEntry">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="fb" green="fb" red="f8" type="rgb"/>
+          <Color blue="fc" green="fc" red="fc" type="rgb"/>
         </Property>
       </Properties>
       <Constraints>
@@ -167,60 +177,68 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="1" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="scrollBookList" alignment="0" max="32767" attributes="0"/>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="lblTopic" min="-2" max="-2" attributes="0"/>
-                              <Component id="cboTopic" min="-2" pref="120" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="lblTitle" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="txtTitle" alignment="0" pref="288" max="32767" attributes="0"/>
-                          </Group>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="lblAuthor" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="txtAuthor" alignment="0" min="-2" pref="240" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="lblYear" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="txtYear" alignment="0" min="-2" pref="60" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="cboEdition" alignment="0" min="-2" pref="60" max="-2" attributes="0"/>
-                              <Component id="lblEdition" alignment="0" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="cboLanguage" alignment="0" min="-2" pref="140" max="-2" attributes="0"/>
-                              <Component id="lblLanguage" alignment="0" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                      <Group type="102" attributes="0">
+                          <Component id="lblListHeader" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
-                      <Group type="102" alignment="1" attributes="0">
-                          <Group type="103" groupAlignment="1" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <Component id="lblNote" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="chkAutoNext" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="scrollBookList" alignment="0" max="32767" attributes="0"/>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="lblTopic" min="-2" max="-2" attributes="0"/>
+                                      <Component id="cboTopic" min="-2" pref="120" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="lblTitle" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="txtTitle" alignment="0" pref="288" max="32767" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="lblAuthor" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="txtAuthor" alignment="0" min="-2" pref="240" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="lblYear" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="txtYear" alignment="0" min="-2" pref="60" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="cboEdition" alignment="0" min="-2" pref="60" max="-2" attributes="0"/>
+                                      <Component id="lblEdition" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="cboLanguage" alignment="0" min="-2" pref="140" max="-2" attributes="0"/>
+                                      <Component id="lblLanguage" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
-                              <Group type="102" attributes="0">
-                                  <Component id="lblPreview" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="lblLength" min="-2" max="-2" attributes="0"/>
+                              <Group type="102" alignment="1" attributes="0">
+                                  <Group type="103" groupAlignment="1" attributes="0">
+                                      <Group type="102" attributes="0">
+                                          <Component id="lblNote" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace max="32767" attributes="0"/>
+                                          <Component id="chkAutoNext" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <Group type="102" attributes="0">
+                                          <Component id="lblPreview" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace max="32767" attributes="0"/>
+                                          <Component id="lblLength" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <Component id="txtPreview" max="32767" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="cmdSetName" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <Component id="txtPreview" max="32767" attributes="0"/>
                           </Group>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="cmdSetName" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -228,8 +246,10 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
-                  <Component id="scrollBookList" pref="288" max="32767" attributes="0"/>
-                  <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
+                  <Component id="lblListHeader" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <Component id="scrollBookList" pref="286" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="lblLanguage" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="lblTitle" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -257,21 +277,26 @@
                       <Component id="cmdSetName" alignment="0" min="-2" pref="26" max="-2" attributes="0"/>
                       <Component id="txtPreview" alignment="0" min="-2" pref="24" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="lblNote" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="chkAutoNext" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
       </Layout>
       <SubComponents>
+        <Component class="javax.swing.JLabel" name="lblListHeader">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="File(s) to Rename"/>
+          </Properties>
+        </Component>
         <Container class="javax.swing.JScrollPane" name="scrollBookList">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+              <Color blue="fc" green="fc" red="fc" type="rgb"/>
             </Property>
           </Properties>
           <AuxValues>
@@ -283,7 +308,7 @@
             <Component class="javax.swing.JTable" name="tblBookList">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="ff" green="f4" red="f4" type="rgb"/>
+                  <Color blue="fc" green="fc" red="fc" type="rgb"/>
                 </Property>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                   <Table columnCount="11" rowCount="0">
@@ -364,7 +389,7 @@
                   <Color blue="e6" green="e6" red="e6" type="rgb"/>
                 </Property>
                 <Property name="selectionBackground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="ff" green="db" red="93" type="rgb"/>
+                  <Color blue="fb" green="e7" red="c0" type="rgb"/>
                 </Property>
                 <Property name="selectionForeground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="1" green="1" red="1" type="rgb"/>
@@ -381,6 +406,9 @@
               <Events>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tblBookListMouseClicked"/>
               </Events>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JTable(){&#xa;    @Override&#xa;    protected void paintComponent(Graphics g) {&#xa;        super.paintComponent(g);&#xa;&#xa;        // If there are no rows, super.paintComponent draws nothing.&#xa;        // We manually draw the grid for the empty space.&#xa;        Graphics2D g2 = (Graphics2D) g;&#xa;        g2.setColor(getGridColor());&#xa;&#xa;        int rowHeight = getRowHeight();&#xa;        int tableHeight = getHeight(); // Full height of the viewport&#xa;        int tableWidth = getWidth();&#xa;        int rowCount = getRowCount();&#xa;        int currentY = (rowCount * rowHeight)-1;&#xa;&#xa;        // 1. Draw Horizontal Lines from the end of data to the bottom&#xa;        while (currentY &lt; tableHeight) {&#xa;            g2.drawLine(0, currentY, tableWidth, currentY);&#xa;            currentY += rowHeight;&#xa;        }&#xa;&#xa;        // 2. Draw Vertical Lines for the columns (regardless of row count)&#xa;        TableColumnModel cm = getColumnModel();&#xa;        int x = 0;&#xa;        for (int i = 0; i &lt; cm.getColumnCount(); i++) {&#xa;            TableColumn col = cm.getColumn(i);&#xa;            x += col.getWidth();&#xa;            // Draw line from top of table to the very bottom of the component&#xa;            g2.drawLine(x - 1, 0, x - 1, tableHeight);&#xa;        }&#xa;    }&#xa;}"/>
+              </AuxValues>
             </Component>
           </SubComponents>
         </Container>
@@ -392,28 +420,6 @@
         <Component class="javax.swing.JComboBox" name="cboTopic">
           <Properties>
             <Property name="editable" type="boolean" value="true"/>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="17">
-                <StringItem index="0" value="C"/>
-                <StringItem index="1" value="CPP"/>
-                <StringItem index="2" value="C#"/>
-                <StringItem index="3" value="Visual Basic"/>
-                <StringItem index="4" value="Visual C"/>
-                <StringItem index="5" value="Visual C++"/>
-                <StringItem index="6" value="Visual C#"/>
-                <StringItem index="7" value="Visual FoxPro"/>
-                <StringItem index="8" value="MFC"/>
-                <StringItem index="9" value="Java"/>
-                <StringItem index="10" value="JavaScript"/>
-                <StringItem index="11" value="Python"/>
-                <StringItem index="12" value="Stories"/>
-                <StringItem index="13" value="Novels"/>
-                <StringItem index="14" value="Accountancy"/>
-                <StringItem index="15" value="HTML"/>
-                <StringItem index="16" value="CSS"/>
-              </StringArray>
-            </Property>
-            <Property name="selectedIndex" type="int" value="-1"/>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[64, 24]"/>
             </Property>
@@ -421,10 +427,6 @@
               <Dimension value="[64, 24]"/>
             </Property>
           </Properties>
-          <Events>
-            <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="cboTopicFocusGained"/>
-            <EventHandler event="inputMethodTextChanged" listener="java.awt.event.InputMethodListener" parameters="java.awt.event.InputMethodEvent" handler="cboTopicInputMethodTextChanged"/>
-          </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
           </AuxValues>
@@ -533,193 +535,6 @@
         </Component>
         <Component class="javax.swing.JComboBox" name="cboLanguage">
           <Properties>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="183">
-                <StringItem index="0" value="Sanskrit_SA"/>
-                <StringItem index="1" value="Malayalam_ML"/>
-                <StringItem index="2" value="Tamil_TA"/>
-                <StringItem index="3" value="Hindi_HI"/>
-                <StringItem index="4" value="English_EN"/>
-                <StringItem index="5" value="Abkhazian_AB"/>
-                <StringItem index="6" value="Afar_AA"/>
-                <StringItem index="7" value="Afrikaans_AF"/>
-                <StringItem index="8" value="Akan_AK"/>
-                <StringItem index="9" value="Albanian_SQ"/>
-                <StringItem index="10" value="Amharic_AM"/>
-                <StringItem index="11" value="Arabic_AR"/>
-                <StringItem index="12" value="Aragonese_AN"/>
-                <StringItem index="13" value="Armenian_HY"/>
-                <StringItem index="14" value="Assamese_AS"/>
-                <StringItem index="15" value="Avaric_AV"/>
-                <StringItem index="16" value="Avestan_AE"/>
-                <StringItem index="17" value="Aymara_AY"/>
-                <StringItem index="18" value="Azerbaijani_AZ"/>
-                <StringItem index="19" value="Bambara_BM"/>
-                <StringItem index="20" value="Bashkir_BA"/>
-                <StringItem index="21" value="Basque_EU"/>
-                <StringItem index="22" value="Belarusian_BE"/>
-                <StringItem index="23" value="Bengali_BN"/>
-                <StringItem index="24" value="Bislama_BI"/>
-                <StringItem index="25" value="Bosnian_BS"/>
-                <StringItem index="26" value="Breton_BR"/>
-                <StringItem index="27" value="Bulgarian_BG"/>
-                <StringItem index="28" value="Burmese_MY"/>
-                <StringItem index="29" value="Catalan, Valencian_CA"/>
-                <StringItem index="30" value="Chamorro_CH"/>
-                <StringItem index="31" value="Chechen_CE"/>
-                <StringItem index="32" value="Chichewa, Chewa, Nyanja_NY"/>
-                <StringItem index="33" value="Chinese_ZH"/>
-                <StringItem index="34" value="Church&#xa0;Slavonic_CU"/>
-                <StringItem index="35" value="Chuvash_CV"/>
-                <StringItem index="36" value="Cornish_KW"/>
-                <StringItem index="37" value="Corsican_CO"/>
-                <StringItem index="38" value="Cree_CR"/>
-                <StringItem index="39" value="Croatian_HR"/>
-                <StringItem index="40" value="Czech_CS"/>
-                <StringItem index="41" value="Danish_DA"/>
-                <StringItem index="42" value="Divehi, Dhivehi, Maldivian_DV"/>
-                <StringItem index="43" value="Dutch,&#xa0;Flemish_NL"/>
-                <StringItem index="44" value="Dzongkha_DZ"/>
-                <StringItem index="45" value="Esperanto_EO"/>
-                <StringItem index="46" value="Estonian_ET"/>
-                <StringItem index="47" value="Ewe_EE"/>
-                <StringItem index="48" value="Faroese_FO"/>
-                <StringItem index="49" value="Fijian_FJ"/>
-                <StringItem index="50" value="Finnish_FI"/>
-                <StringItem index="51" value="French_FR"/>
-                <StringItem index="52" value="Western Frisian_FY"/>
-                <StringItem index="53" value="Fulah_FF"/>
-                <StringItem index="54" value="Gaelic, Scottish&#xa0;Gaelic_GD"/>
-                <StringItem index="55" value="Galician_GL"/>
-                <StringItem index="56" value="Ganda_LG"/>
-                <StringItem index="57" value="Georgian_KA"/>
-                <StringItem index="58" value="German_DE"/>
-                <StringItem index="59" value="Greek, Modern&#xa0;(1453&#x2013;)_EL"/>
-                <StringItem index="60" value="Kalaallisut, Greenlandic_KL"/>
-                <StringItem index="61" value="Guarani_GN"/>
-                <StringItem index="62" value="Gujarati_GU"/>
-                <StringItem index="63" value="Haitian, Haitian&#xa0;Creole_HT"/>
-                <StringItem index="64" value="Hausa_HA"/>
-                <StringItem index="65" value="Hebrew_HE"/>
-                <StringItem index="66" value="Herero_HZ"/>
-                <StringItem index="67" value="Hiri Motu_HO"/>
-                <StringItem index="68" value="Hungarian_HU"/>
-                <StringItem index="69" value="Icelandic_IS"/>
-                <StringItem index="70" value="Ido_IO"/>
-                <StringItem index="71" value="Igbo_IG"/>
-                <StringItem index="72" value="Indonesian_ID"/>
-                <StringItem index="73" value="Interlingua&#xa0;(IALA)_IA"/>
-                <StringItem index="74" value="Interlingue, Occidental_IE"/>
-                <StringItem index="75" value="Inuktitut_IU"/>
-                <StringItem index="76" value="Inupiaq_IK"/>
-                <StringItem index="77" value="Irish_GA"/>
-                <StringItem index="78" value="Italian_IT"/>
-                <StringItem index="79" value="Japanese_JA"/>
-                <StringItem index="80" value="Javanese_JV"/>
-                <StringItem index="81" value="Kannada_KN"/>
-                <StringItem index="82" value="Kanuri_KR"/>
-                <StringItem index="83" value="Kashmiri_KS"/>
-                <StringItem index="84" value="Kazakh_KK"/>
-                <StringItem index="85" value="Central Khmer_KM"/>
-                <StringItem index="86" value="Kikuyu, Gikuyu_KI"/>
-                <StringItem index="87" value="Kinyarwanda_RW"/>
-                <StringItem index="88" value="Kyrgyz, Kirghiz_KY"/>
-                <StringItem index="89" value="Komi_KV"/>
-                <StringItem index="90" value="Kongo_KG"/>
-                <StringItem index="91" value="Korean_KO"/>
-                <StringItem index="92" value="Kuanyama, Kwanyama_KJ"/>
-                <StringItem index="93" value="Kurdish_KU"/>
-                <StringItem index="94" value="Lao_LO"/>
-                <StringItem index="95" value="Latin_LA"/>
-                <StringItem index="96" value="Latvian_LV"/>
-                <StringItem index="97" value="Limburgan, Limburger, Limburgish_LI"/>
-                <StringItem index="98" value="Lingala_LN"/>
-                <StringItem index="99" value="Lithuanian_LT"/>
-                <StringItem index="100" value="Luba-Katanga_LU"/>
-                <StringItem index="101" value="Luxembourgish, Letzeburgesch_LB"/>
-                <StringItem index="102" value="Macedonian_MK"/>
-                <StringItem index="103" value="Malagasy_MG"/>
-                <StringItem index="104" value="Malay_MS"/>
-                <StringItem index="105" value="Maltese_MT"/>
-                <StringItem index="106" value="Manx_GV"/>
-                <StringItem index="107" value="Maori_MI"/>
-                <StringItem index="108" value="Marathi_MR"/>
-                <StringItem index="109" value="Marshallese_MH"/>
-                <StringItem index="110" value="Mongolian_MN"/>
-                <StringItem index="111" value="Nauru_NA"/>
-                <StringItem index="112" value="Navajo, Navaho_NV"/>
-                <StringItem index="113" value="North Ndebele_ND"/>
-                <StringItem index="114" value="South Ndebele_NR"/>
-                <StringItem index="115" value="Ndonga_NG"/>
-                <StringItem index="116" value="Nepali_NE"/>
-                <StringItem index="117" value="Norwegian_NO"/>
-                <StringItem index="118" value="Norwegian Bokm&#xe5;l_NB"/>
-                <StringItem index="119" value="Norwegian Nynorsk_NN"/>
-                <StringItem index="120" value="Occitan_OC"/>
-                <StringItem index="121" value="Ojibwa_OJ"/>
-                <StringItem index="122" value="Oriya_OR"/>
-                <StringItem index="123" value="Oromo_OM"/>
-                <StringItem index="124" value="Ossetian, Ossetic_OS"/>
-                <StringItem index="125" value="Pali_PI"/>
-                <StringItem index="126" value="Pashto, Pushto_PS"/>
-                <StringItem index="127" value="Persian_FA"/>
-                <StringItem index="128" value="Polish_PL"/>
-                <StringItem index="129" value="Portuguese_PT"/>
-                <StringItem index="130" value="Punjabi, Panjabi_PA"/>
-                <StringItem index="131" value="Quechua_QU"/>
-                <StringItem index="132" value="Romanian,&#xa0;Moldavian, Moldovan_RO"/>
-                <StringItem index="133" value="Romansh_RM"/>
-                <StringItem index="134" value="Rundi_RN"/>
-                <StringItem index="135" value="Russian_RU"/>
-                <StringItem index="136" value="Northern Sami_SE"/>
-                <StringItem index="137" value="Samoan_SM"/>
-                <StringItem index="138" value="Sango_SG"/>
-                <StringItem index="139" value="Sardinian_SC"/>
-                <StringItem index="140" value="Serbian_SR"/>
-                <StringItem index="141" value="Shona_SN"/>
-                <StringItem index="142" value="Sindhi_SD"/>
-                <StringItem index="143" value="Sinhala, Sinhalese_SI"/>
-                <StringItem index="144" value="Slovak_SK"/>
-                <StringItem index="145" value="Slovenian_SL"/>
-                <StringItem index="146" value="Somali_SO"/>
-                <StringItem index="147" value="Southern Sotho_ST"/>
-                <StringItem index="148" value="Spanish, Castilian_ES"/>
-                <StringItem index="149" value="Sundanese_SU"/>
-                <StringItem index="150" value="Swahili_SW"/>
-                <StringItem index="151" value="Swati_SS"/>
-                <StringItem index="152" value="Swedish_SV"/>
-                <StringItem index="153" value="Tagalog_TL"/>
-                <StringItem index="154" value="Tahitian_TY"/>
-                <StringItem index="155" value="Tajik_TG"/>
-                <StringItem index="156" value="Tatar_TT"/>
-                <StringItem index="157" value="Telugu_TE"/>
-                <StringItem index="158" value="Thai_TH"/>
-                <StringItem index="159" value="Tibetan_BO"/>
-                <StringItem index="160" value="Tigrinya_TI"/>
-                <StringItem index="161" value="Tonga&#xa0;(Tonga Islands)_TO"/>
-                <StringItem index="162" value="Tsonga_TS"/>
-                <StringItem index="163" value="Tswana_TN"/>
-                <StringItem index="164" value="Turkish_TR"/>
-                <StringItem index="165" value="Turkmen_TK"/>
-                <StringItem index="166" value="Twi_TW"/>
-                <StringItem index="167" value="Uighur, Uyghur_UG"/>
-                <StringItem index="168" value="Ukrainian_UK"/>
-                <StringItem index="169" value="Urdu_UR"/>
-                <StringItem index="170" value="Uzbek_UZ"/>
-                <StringItem index="171" value="Venda_VE"/>
-                <StringItem index="172" value="Vietnamese_VI"/>
-                <StringItem index="173" value="Volap&#xfc;k_VO"/>
-                <StringItem index="174" value="Walloon_WA"/>
-                <StringItem index="175" value="Welsh_CY"/>
-                <StringItem index="176" value="Wolof_WO"/>
-                <StringItem index="177" value="Xhosa_XH"/>
-                <StringItem index="178" value="Sichuan Yi, Nuosu_II"/>
-                <StringItem index="179" value="Yiddish_YI"/>
-                <StringItem index="180" value="Yoruba_YO"/>
-                <StringItem index="181" value="Zhuang, Chuang_ZA"/>
-                <StringItem index="182" value="Zulu_ZU"/>
-              </StringArray>
-            </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[64, 24]"/>
             </Property>
@@ -728,7 +543,7 @@
             </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;LanguageItem&gt;"/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="lblPreview">
@@ -789,171 +604,53 @@
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="paneActions">
-      <Properties>
-        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="ec" green="ec" red="e0" type="rgb"/>
-        </Property>
-      </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
           <BorderConstraints direction="Last"/>
         </Constraint>
       </Constraints>
 
-      <Layout>
-        <DimensionLayout dim="0">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="paneStatus" max="32767" attributes="0"/>
-              <Group type="102" attributes="0">
-                  <Component id="paneFolderChoice" max="32767" attributes="0"/>
-                  <EmptySpace min="-2" pref="120" max="-2" attributes="0"/>
-                  <Component id="cmdRenameSelected" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                  <Component id="cmdRenameAll" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
-              </Group>
-          </Group>
-        </DimensionLayout>
-        <DimensionLayout dim="1">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="2" attributes="0">
-                      <Component id="cmdRenameAll" alignment="2" min="-2" pref="36" max="-2" attributes="0"/>
-                      <Component id="cmdRenameSelected" alignment="2" min="-2" pref="36" max="-2" attributes="0"/>
-                      <Component id="paneFolderChoice" alignment="2" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-                  <Component id="paneStatus" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-              </Group>
-          </Group>
-        </DimensionLayout>
-      </Layout>
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JButton" name="cmdRenameSelected">
-          <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/resources/icons/69-16.png"/>
-            </Property>
-            <Property name="text" type="java.lang.String" value="Rename Selected"/>
-            <Property name="iconTextGap" type="int" value="8"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmdRenameSelectedActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JButton" name="cmdRenameAll">
-          <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/resources/icons/38-16.png"/>
-            </Property>
-            <Property name="text" type="java.lang.String" value="Rename All"/>
-            <Property name="iconTextGap" type="int" value="8"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmdRenameAllActionPerformed"/>
-          </Events>
-        </Component>
-        <Container class="javax.swing.JPanel" name="paneStatus">
-          <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="f5" green="f5" red="f5" type="rgb"/>
-            </Property>
-          </Properties>
-
-          <Layout>
-            <DimensionLayout dim="0">
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
-                      <Component id="lblStatus" max="32767" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="jSeparator1" min="-2" pref="13" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="lblCompany" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
-                  </Group>
-              </Group>
-            </DimensionLayout>
-            <DimensionLayout dim="1">
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="jSeparator1" alignment="1" min="-2" pref="15" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="lblStatus" alignment="1" min="-2" max="-2" attributes="0"/>
-                              <Component id="lblCompany" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
-                      <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-                  </Group>
-              </Group>
-            </DimensionLayout>
-          </Layout>
-          <SubComponents>
-            <Component class="javax.swing.JLabel" name="lblCompany">
-              <Properties>
-                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="99" green="33" red="0" type="rgb"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="&#xa9; 2025  J Soft - EBook Renamer Version 1.0.0"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JLabel" name="lblStatus">
-              <Properties>
-                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                  <Color blue="f0" green="f0" red="f0" type="rgb"/>
-                </Property>
-                <Property name="text" type="java.lang.String" value="Ready - Double Click on Table to Edit and Set name before Renaming"/>
-              </Properties>
-            </Component>
-            <Component class="javax.swing.JSeparator" name="jSeparator1">
-              <Properties>
-                <Property name="orientation" type="int" value="1"/>
-              </Properties>
-            </Component>
-          </SubComponents>
-        </Container>
         <Container class="javax.swing.JPanel" name="paneFolderChoice">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="f3" green="f3" red="ec" type="rgb"/>
+              <Color blue="dc" green="ef" red="92" type="rgb"/>
             </Property>
           </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+              <BorderConstraints direction="Center"/>
+            </Constraint>
+          </Constraints>
 
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="chkMoveToFolder" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Component id="txtMoveToFolder" pref="349" max="32767" attributes="0"/>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Component id="cmdBrowse" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="chkCreateFolders" alignment="0" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
+                      <Component id="chkCreateFolders" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="chkMoveToFolder" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="txtMoveToFolder" pref="261" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="cmdBrowse" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="2" attributes="0">
+                          <Component id="chkCreateFolders" alignment="2" min="-2" max="-2" attributes="0"/>
                           <Component id="chkMoveToFolder" alignment="2" min="-2" max="-2" attributes="0"/>
                           <Component id="txtMoveToFolder" alignment="2" min="-2" pref="24" max="-2" attributes="0"/>
                           <Component id="cmdBrowse" alignment="2" min="-2" pref="25" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="chkCreateFolders" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -999,6 +696,111 @@
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmdBrowseActionPerformed"/>
               </Events>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Container class="javax.swing.JPanel" name="paneAction">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="e9" green="f5" red="bc" type="rgb"/>
+            </Property>
+          </Properties>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+              <BorderConstraints direction="East"/>
+            </Constraint>
+          </Constraints>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
+                      <Component id="cmdRenameSelected" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                      <Component id="cmdRenameAll" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="2" attributes="0">
+                          <Component id="cmdRenameAll" alignment="2" min="-2" pref="36" max="-2" attributes="0"/>
+                          <Component id="cmdRenameSelected" alignment="2" min="-2" pref="36" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="javax.swing.JButton" name="cmdRenameSelected">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/resources/icons/69-16.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Rename Selected"/>
+                <Property name="iconTextGap" type="int" value="8"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmdRenameSelectedActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="cmdRenameAll">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/resources/icons/38-16.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Rename All"/>
+                <Property name="iconTextGap" type="int" value="8"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmdRenameAllActionPerformed"/>
+              </Events>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Container class="javax.swing.JPanel" name="paneStatus">
+          <Properties>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
+                <EmptyBorder bottom="4" left="16" right="16" top="4"/>
+              </Border>
+            </Property>
+          </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JPanel()&#xa;{&#xa;&#xa;    protected void paintComponent(Graphics g)&#xa;    {&#xa;        super.paintComponent(g);&#xa;        Graphics2D g2d = (Graphics2D) g;&#xa;        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);&#xa;&#xa;        try{&#xa;            //Logo Image&#xa;            g2d.drawImage(footerBgImage,&#xa;                0,&#xa;                0,&#xa;                getWidth()+4,&#xa;                getHeight(),&#xa;                null);&#xa;        }&#xa;        catch(Exception e){&#xa;        }&#xa;    }&#xa;}&#xa;"/>
+          </AuxValues>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+              <BorderConstraints direction="South"/>
+            </Constraint>
+          </Constraints>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+          <SubComponents>
+            <Component class="javax.swing.JLabel" name="lblStatus">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Ready - Double Click on Table to Edit and Set name before Renaming"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                  <BorderConstraints direction="Center"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Component class="javax.swing.JLabel" name="lblCompany">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="company"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+                  <BorderConstraints direction="East"/>
+                </Constraint>
+              </Constraints>
             </Component>
           </SubComponents>
         </Container>

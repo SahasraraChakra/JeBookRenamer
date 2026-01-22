@@ -3,6 +3,7 @@
     Author	:   Jeevan Kumar Vishwakarman
     Company	:   J Soft
     Created on	:   25-Jul-2025  12:26:49 pm
+
 ************************************************
  */
 package EBookRenamerJ;
@@ -13,6 +14,15 @@ import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -21,26 +31,39 @@ import java.nio.file.*;
 import java.util.stream.Stream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Year;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.event.TableModelEvent;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import javax.swing.text.JTextComponent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
+import org.w3c.dom.Document;
 
 /**
  *
@@ -52,122 +75,219 @@ public class frmRenamer extends javax.swing.JFrame {
      * Creates new form frmRenamer
      */
     BufferedImage icon;
+    BufferedImage headerBgImage, footerBgImage;
     DefaultTableModel dtm;
-    Font customFont, boldFont;
+    Font customFont, boldFont, headerFont;
     FontMetrics metrics;
     StringBuilder previewname;
-    int editRow      = -1;
     JTextComponent topicEditor;
     Color defaultTableForeground;
     Color defaultTableBackground;
     Color defaultTableSelForeground;
     Color defaultTableSelBackground;
-    int renamecout   = 0; 
-    int successcount = 0; 
-    int errorcount   = 0; 
+    int editRow = -1;
+    int renamecout = 0;
+    int successcount = 0;
+    int errorcount = 0;
     int warningcount = 0;
-    Map<Integer, Integer> renameresult;
+    int initialTotalWidth = 0;
+
+    String appversion = "1.8.0";
+    Map<Integer, Integer> renameresult = new HashMap();
+    Document document;
+    Set<String> categories = new HashSet<>();
+    DefaultComboBoxModel<String> model;
 
     public frmRenamer() {
-	try {
+        try {
+            headerBgImage = ImageIO.read(getClass().getResource("/resources/icons/header-bg.jpg"));
+            footerBgImage = ImageIO.read(getClass().getResource("/resources/icons/footer-bg.jpg"));
+            icon = ImageIO.read(getClass().getResource("/resources/icons/appIcon-32.png"));
+            this.setIconImage(icon);
+        } catch (IOException /*| IllegalArgumentException*/ ex) {
 
-	    icon = ImageIO.read(getClass().getResource("/resources/icons/appIcon-Red.png"));
-	    this.setIconImage(icon);
-	} catch (IOException /*| IllegalArgumentException*/ ex) {
+        }
+        this.setLocationRelativeTo(null);
+        initComponents();
 
-	}
-	this.setLocationRelativeTo(null);
+        try {
+            document = ConfigXmlUtil.loadDocument();
+        } catch (Exception ex) {
+            Logger.getLogger(frmRenamer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        loadLanguages();
+        loadCategories();
 
-	initComponents();
+        //  Font Setup        
+        customFont = UIManager.getFont("regFont");
+        boldFont = UIManager.getFont("boldFont");
+        headerFont = boldFont.deriveFont(20f);
+        metrics = new Canvas().getFontMetrics(customFont);
 
-	customFont                = new Font("Red Hat Display", Font.PLAIN, 13);     
-	boldFont                  = new Font("Red Hat Display Bold", Font.PLAIN, 13);
-	metrics                   = new Canvas().getFontMetrics(customFont);         
-	defaultTableForeground    = UIManager.getColor("Table.foreground");          
-	defaultTableBackground    = UIManager.getColor("Table.background");          
-	defaultTableSelBackground = UIManager.getColor("Table.selectionBackground"); 
-	defaultTableSelForeground = UIManager.getColor("Table.selectionForeground");
-	
-	dtm = (DefaultTableModel) tblBookList.getModel();
-	tblBookList.getTableHeader().setFont(boldFont);
-	tblBookList.setRowHeight(customFont.getSize() + 10);
+        //  Table Color Setup
+        defaultTableForeground = UIManager.getColor("Table.foreground");
+        defaultTableBackground = UIManager.getColor("Table.background");
+        defaultTableSelBackground = UIManager.getColor("Table.selectionBackground");
+        defaultTableSelForeground = UIManager.getColor("Table.selectionForeground");
 
-//	table cell padding
-	tblBookList.setDefaultRenderer(String.class, new DefaultTableCellRenderer() {
-				   int topPadding = 4;
-				   int leftPadding = 8;
-				   int bottomPadding = 4;
-				   int rightPadding = 8;
+        //  Table Setup
+        dtm = (DefaultTableModel) tblBookList.getModel();
+        tblBookList.setRowHeight(customFont.getSize() + 10);
+        //  table cell padding
+        tblBookList.setDefaultRenderer(String.class, new DefaultTableCellRenderer() {
+            int topPadding = 4;
+            int leftPadding = 8;
+            int bottomPadding = 4;
+            int rightPadding = 8;
 
-				   @Override
-				   public Component getTableCellRendererComponent(JTable table, Object value,
-										  boolean isSelected, boolean hasFocus,
-										  int row, int column) {
-				       super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-				       setBorder(new EmptyBorder(topPadding, leftPadding, bottomPadding, rightPadding));
-				       return this;
-				   }
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus,
+                    int row, int column) {
+                super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                setBorder(new EmptyBorder(topPadding, leftPadding, bottomPadding, rightPadding));
+                return this;
+            }
 
-			       });
+        });
 
-	dtm.addTableModelListener(e -> {
-	    if (e.getType() == TableModelEvent.INSERT || e.getType() == TableModelEvent.DELETE) {
-		lblStatus.setText(tblBookList.getRowCount() + " Files for Renaming - Ready - Double Click on Table to Edit and Set name before Renaming");
-		if (tblBookList.getRowCount() == 0) {
-		    cmdRemoveAll.setEnabled(false);
-		    cmdRemoveSelected.setEnabled(false);
-		} else {
-		    cmdRemoveAll.setEnabled(true);
-		    cmdRemoveSelected.setEnabled(true);
-		}
-	    }
-	});
+        DefaultTableCellRenderer centerrenderer = new DefaultTableCellRenderer();
+        centerrenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        tblBookList.getColumnModel().getColumn(0).setCellRenderer(centerrenderer);
+        tblBookList.setFillsViewportHeight(true);
 
-	DefaultTableCellRenderer centerrenderer = new DefaultTableCellRenderer();
-	centerrenderer.setHorizontalAlignment(SwingConstants.CENTER);
-	tblBookList.getColumnModel().getColumn(0).setCellRenderer(centerrenderer);
-	tblBookList.setOpaque(true);
-	tblBookList.setBackground(Color.white);
-	tblBookList.setFillsViewportHeight(true);
+        //  Calculate initial total width
+        TableColumnModel columnModel = tblBookList.getColumnModel();
+        for (int i = 0; i < columnModel.getColumnCount(); i++) {
+            TableColumn col = columnModel.getColumn(i);
+            col.setPreferredWidth(100); // initial width
+            initialTotalWidth += col.getWidth();
+        }
 
-	chkAutoNext.setOpaque(false);
-	chkCreateFolders.setOpaque(false);
-	chkMoveToFolder.setOpaque(false);
-	lblTitle.setFont(boldFont);
-	txtPreview.setFont(boldFont);
-	cmdSetName.setFont(boldFont);
-	lblCompany.setFont(boldFont);
+        //  Set opacity
+        chkAutoNext.setOpaque(false);
+        chkCreateFolders.setOpaque(false);
+        chkMoveToFolder.setOpaque(false);
 
-//	adding listeners
-	DocumentListener docListener = new DocumentListener() {
-	    @Override
-	    public void insertUpdate(DocumentEvent e) {
-		buildPreviewName();
-	    }
+        //  Set font
+        tblBookList.getTableHeader().setFont(boldFont);
+        lblAppTitle.setFont(headerFont);
+        lblListHeader.setFont(boldFont);
+        lblTitle.setFont(boldFont);
+        txtPreview.setFont(boldFont);
+        cmdSetName.setFont(boldFont);
+        lblCompany.setFont(boldFont);
+        cmdOpenBook.setEnabled(false);
 
-	    @Override
-	    public void removeUpdate(DocumentEvent e) {
-		buildPreviewName();
-	    }
+        //  Set Initial Values
+        cboTopic.setEditable(true);
+        cboTopic.setSelectedIndex(-1);
 
-	    @Override
-	    public void changedUpdate(DocumentEvent e) {
-		buildPreviewName();
-	    } // Often unused for plain text
-	};
+        //  Set initial Texts
+        lblCompany.setText("JSoftBharath@gmail.com   //  © 2025 - " + Year.now().getValue() + " J Soft Bharath  //  EBook Renamer Version " + appversion);
 
-	cboTopic.setEditable(true);
-	topicEditor = (JTextComponent) cboTopic.getEditor().getEditorComponent();
-	topicEditor.getDocument().addDocumentListener(docListener);
-	//cboTopic.addItemListener(e -> buildPreviewName());
+        // Listen for JFrame resize and adjust second column of table to fill the rest of width
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                SwingUtilities.invokeLater(() -> adjustSecondColumn(tblBookList, scrollBookList, initialTotalWidth));
+            }
+        });
 
-	txtTitle.getDocument().addDocumentListener(docListener);
-	txtAuthor.getDocument().addDocumentListener(docListener);
-	txtYear.getDocument().addDocumentListener(docListener);
-	cboEdition.addItemListener(e -> buildPreviewName());
-	cboLanguage.addItemListener(e -> buildPreviewName());
-	
-	renameresult = new HashMap();
+        //  Table Selection listener
+        tblBookList.getSelectionModel().addListSelectionListener(e -> {
+            boolean selRow = tblBookList.getSelectedRowCount() > 0;
+            cmdRenameSelected.setEnabled(selRow);
+            cmdRemoveSelected.setEnabled(selRow);
+            cmdOpenBook.setEnabled(selRow);
+        });
+        //  Table Action listener
+        dtm.addTableModelListener(e -> {
+            lblStatus.setText(tblBookList.getRowCount() + " Files for Renaming - Ready - Double Click on Table to Edit and Set name before Renaming");
+            actionButtonsEnabler();
+
+        });
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                try {
+                    saveCategories();
+                } catch (Exception ex) {
+                    System.out.println("Cant Save Categories on exit!!!");
+                }
+            }
+        });
+
+        //  adding listeners
+//        AutoCompleteComboBox.enable(cboTopic);
+        topicEditor = (JTextComponent) cboTopic.getEditor().getEditorComponent();
+        model = (DefaultComboBoxModel<String>) cboTopic.getModel();
+        topicEditor.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if (e.getKeyChar() != KeyEvent.VK_UP || e.getKeyChar() != KeyEvent.VK_DOWN) {
+                    handleInput();
+                }
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+            }
+        });
+
+        topicEditor.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                String inputText = topicEditor.getText().trim();
+                if (inputText.isEmpty()) {
+                    return;
+                }
+                String sanitizedText = sanitize(inputText);
+                if (sanitizedText.isEmpty()) {
+                    return;
+                }
+                if (!categories.contains(sanitizedText)) {
+                    categories.add(sanitizedText);
+                    cboTopic.addItem(sanitizedText);
+                }
+                topicEditor.setText(sanitizedText);
+                cboTopic.hidePopup();
+                buildPreviewName();
+            }
+
+            @Override
+            public void focusGained(FocusEvent e) {
+                topicEditor.selectAll();
+            }
+        });
+        DocumentListener docListener = new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                buildPreviewName();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                buildPreviewName();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                buildPreviewName();
+            } // Often unused for plain text
+        };
+        txtTitle.getDocument().addDocumentListener(docListener);
+        txtAuthor.getDocument().addDocumentListener(docListener);
+        txtYear.getDocument().addDocumentListener(docListener);
+        cboEdition.addItemListener(e -> buildPreviewName());
+        cboLanguage.addItemListener(e -> buildPreviewName());
+
+        actionButtonsEnabler();
     }
 
     /**
@@ -179,15 +299,73 @@ public class frmRenamer extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        paneHeader = new javax.swing.JPanel();
+        paneHeader = new javax.swing.JPanel(){
+            int width;
+            protected void paintComponent(Graphics g)
+            {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+
+                try{
+                    width = headerBgImage.getWidth()>=getWidth()?
+                    headerBgImage.getWidth():
+                    getWidth();
+                    //draw Image
+                    g2d.drawImage(headerBgImage,
+                        0,
+                        0,
+                        getWidth(),
+                        getHeight(),
+                        null);
+                }
+                catch(Exception e){
+                }
+            }
+        }
+        ;
+        lblAppTitle = new javax.swing.JLabel();
         cmdOpenBook = new javax.swing.JButton();
         cmdChooseFolder = new javax.swing.JButton();
         cmdRemoveSelected = new javax.swing.JButton();
         cmdRemoveAll = new javax.swing.JButton();
         cmdChooseFiles = new javax.swing.JButton();
         paneEntry = new javax.swing.JPanel();
+        lblListHeader = new javax.swing.JLabel();
         scrollBookList = new javax.swing.JScrollPane();
-        tblBookList = new javax.swing.JTable();
+        tblBookList = new javax.swing.JTable(){
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+
+                // If there are no rows, super.paintComponent draws nothing.
+                // We manually draw the grid for the empty space.
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setColor(getGridColor());
+
+                int rowHeight = getRowHeight();
+                int tableHeight = getHeight(); // Full height of the viewport
+                int tableWidth = getWidth();
+                int rowCount = getRowCount();
+                int currentY = (rowCount * rowHeight)-1;
+
+                // 1. Draw Horizontal Lines from the end of data to the bottom
+                while (currentY < tableHeight) {
+                    g2.drawLine(0, currentY, tableWidth, currentY);
+                    currentY += rowHeight;
+                }
+
+                // 2. Draw Vertical Lines for the columns (regardless of row count)
+                TableColumnModel cm = getColumnModel();
+                int x = 0;
+                for (int i = 0; i < cm.getColumnCount(); i++) {
+                    TableColumn col = cm.getColumn(i);
+                    x += col.getWidth();
+                    // Draw line from top of table to the very bottom of the component
+                    g2.drawLine(x - 1, 0, x - 1, tableHeight);
+                }
+            }
+        };
         lblTopic = new javax.swing.JLabel();
         cboTopic = new javax.swing.JComboBox<>();
         lblTitle = new javax.swing.JLabel();
@@ -207,29 +385,59 @@ public class frmRenamer extends javax.swing.JFrame {
         chkAutoNext = new javax.swing.JCheckBox();
         cmdSetName = new javax.swing.JButton();
         paneActions = new javax.swing.JPanel();
-        cmdRenameSelected = new javax.swing.JButton();
-        cmdRenameAll = new javax.swing.JButton();
-        paneStatus = new javax.swing.JPanel();
-        lblCompany = new javax.swing.JLabel();
-        lblStatus = new javax.swing.JLabel();
-        jSeparator1 = new javax.swing.JSeparator();
         paneFolderChoice = new javax.swing.JPanel();
         chkCreateFolders = new javax.swing.JCheckBox();
         chkMoveToFolder = new javax.swing.JCheckBox();
         txtMoveToFolder = new javax.swing.JTextField();
         cmdBrowse = new javax.swing.JButton();
+        paneAction = new javax.swing.JPanel();
+        cmdRenameSelected = new javax.swing.JButton();
+        cmdRenameAll = new javax.swing.JButton();
+        paneStatus = new javax.swing.JPanel()
+        {
+
+            protected void paintComponent(Graphics g)
+            {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+
+                try{
+                    //Logo Image
+                    g2d.drawImage(footerBgImage,
+                        0,
+                        0,
+                        getWidth()+4,
+                        getHeight(),
+                        null);
+                }
+                catch(Exception e){
+                }
+            }
+        }
+        ;
+        lblStatus = new javax.swing.JLabel();
+        lblCompany = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("JSoft Ebook Renamer");
+        setTitle("E Book Renamer : J Soft Bharath ");
         setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
-        setMinimumSize(new java.awt.Dimension(1000, 620));
+        setMinimumSize(new java.awt.Dimension(1000, 600));
         setName("frmRenamer"); // NOI18N
-        setPreferredSize(new java.awt.Dimension(1000, 620));
+        setPreferredSize(new java.awt.Dimension(1000, 600));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowActivated(java.awt.event.WindowEvent evt) {
+                formWindowActivated(evt);
+            }
+        });
 
-        paneHeader.setBackground(new java.awt.Color(242, 247, 247));
+        paneHeader.setBackground(new java.awt.Color(255, 153, 0));
+
+        lblAppTitle.setForeground(new java.awt.Color(255, 255, 255));
+        lblAppTitle.setText("J Soft Bharath  |  E-Book Renamer");
 
         cmdOpenBook.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/icons/34-16.png"))); // NOI18N
-        cmdOpenBook.setText("Open File In System");
+        cmdOpenBook.setText("Open");
         cmdOpenBook.setIconTextGap(8);
         cmdOpenBook.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -247,7 +455,7 @@ public class frmRenamer extends javax.swing.JFrame {
         });
 
         cmdRemoveSelected.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/icons/14-16.png"))); // NOI18N
-        cmdRemoveSelected.setText("Remove Selected");
+        cmdRemoveSelected.setText("Remove");
         cmdRemoveSelected.setEnabled(false);
         cmdRemoveSelected.setIconTextGap(8);
         cmdRemoveSelected.addActionListener(new java.awt.event.ActionListener() {
@@ -257,7 +465,7 @@ public class frmRenamer extends javax.swing.JFrame {
         });
 
         cmdRemoveAll.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/icons/33-16.png"))); // NOI18N
-        cmdRemoveAll.setText("Remove All");
+        cmdRemoveAll.setText("Clear");
         cmdRemoveAll.setEnabled(false);
         cmdRemoveAll.setIconTextGap(8);
         cmdRemoveAll.addActionListener(new java.awt.event.ActionListener() {
@@ -281,41 +489,42 @@ public class frmRenamer extends javax.swing.JFrame {
             paneHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(paneHeaderLayout.createSequentialGroup()
                 .addGap(16, 16, 16)
-                .addGroup(paneHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(paneHeaderLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 522, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(cmdOpenBook)
-                        .addGap(18, 18, 18)
-                        .addComponent(cmdRemoveSelected)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cmdRemoveAll))
-                    .addGroup(paneHeaderLayout.createSequentialGroup()
-                        .addComponent(cmdChooseFiles)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cmdChooseFolder)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addComponent(lblAppTitle)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 180, Short.MAX_VALUE)
+                .addComponent(cmdChooseFiles)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(cmdChooseFolder)
+                .addGap(32, 32, 32)
+                .addComponent(cmdOpenBook)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(cmdRemoveSelected)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(cmdRemoveAll)
                 .addGap(16, 16, 16))
         );
         paneHeaderLayout.setVerticalGroup(
             paneHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(paneHeaderLayout.createSequentialGroup()
-                .addGap(16, 16, 16)
+                .addGap(10, 10, 10)
                 .addGroup(paneHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(cmdChooseFolder, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cmdChooseFiles, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cmdOpenBook, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cmdRemoveSelected, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cmdRemoveAll, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(8, 8, 8))
+                    .addComponent(cmdRemoveAll, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cmdChooseFiles, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblAppTitle)
+                    .addComponent(cmdOpenBook, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cmdChooseFolder, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(10, 10, 10))
         );
 
         getContentPane().add(paneHeader, java.awt.BorderLayout.PAGE_START);
 
-        paneEntry.setBackground(new java.awt.Color(248, 251, 251));
+        paneEntry.setBackground(new java.awt.Color(252, 252, 252));
 
-        scrollBookList.setBackground(new java.awt.Color(255, 255, 255));
+        lblListHeader.setText("File(s) to Rename");
 
-        tblBookList.setBackground(new java.awt.Color(244, 244, 255));
+        scrollBookList.setBackground(new java.awt.Color(252, 252, 252));
+
+        tblBookList.setBackground(new java.awt.Color(252, 252, 252));
         tblBookList.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -341,7 +550,7 @@ public class frmRenamer extends javax.swing.JFrame {
         });
         tblBookList.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
         tblBookList.setGridColor(new java.awt.Color(230, 230, 230));
-        tblBookList.setSelectionBackground(new java.awt.Color(147, 219, 255));
+        tblBookList.setSelectionBackground(new java.awt.Color(192, 231, 251));
         tblBookList.setSelectionForeground(new java.awt.Color(1, 1, 1));
         tblBookList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         tblBookList.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -371,22 +580,8 @@ public class frmRenamer extends javax.swing.JFrame {
         lblTopic.setText("Topic");
 
         cboTopic.setEditable(true);
-        cboTopic.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "C", "CPP", "C#", "Visual Basic", "Visual C", "Visual C++", "Visual C#", "Visual FoxPro", "MFC", "Java", "JavaScript", "Python", "Stories", "Novels", "Accountancy", "HTML", "CSS" }));
-        cboTopic.setSelectedIndex(-1);
         cboTopic.setMinimumSize(new java.awt.Dimension(64, 24));
         cboTopic.setPreferredSize(new java.awt.Dimension(64, 24));
-        cboTopic.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                cboTopicFocusGained(evt);
-            }
-        });
-        cboTopic.addInputMethodListener(new java.awt.event.InputMethodListener() {
-            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
-            }
-            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
-                cboTopicInputMethodTextChanged(evt);
-            }
-        });
 
         lblTitle.setText("Title*");
 
@@ -431,7 +626,6 @@ public class frmRenamer extends javax.swing.JFrame {
 
         lblLanguage.setText("Language");
 
-        cboLanguage.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Sanskrit_SA", "Malayalam_ML", "Tamil_TA", "Hindi_HI", "English_EN", "Abkhazian_AB", "Afar_AA", "Afrikaans_AF", "Akan_AK", "Albanian_SQ", "Amharic_AM", "Arabic_AR", "Aragonese_AN", "Armenian_HY", "Assamese_AS", "Avaric_AV", "Avestan_AE", "Aymara_AY", "Azerbaijani_AZ", "Bambara_BM", "Bashkir_BA", "Basque_EU", "Belarusian_BE", "Bengali_BN", "Bislama_BI", "Bosnian_BS", "Breton_BR", "Bulgarian_BG", "Burmese_MY", "Catalan, Valencian_CA", "Chamorro_CH", "Chechen_CE", "Chichewa, Chewa, Nyanja_NY", "Chinese_ZH", "Church Slavonic_CU", "Chuvash_CV", "Cornish_KW", "Corsican_CO", "Cree_CR", "Croatian_HR", "Czech_CS", "Danish_DA", "Divehi, Dhivehi, Maldivian_DV", "Dutch, Flemish_NL", "Dzongkha_DZ", "Esperanto_EO", "Estonian_ET", "Ewe_EE", "Faroese_FO", "Fijian_FJ", "Finnish_FI", "French_FR", "Western Frisian_FY", "Fulah_FF", "Gaelic, Scottish Gaelic_GD", "Galician_GL", "Ganda_LG", "Georgian_KA", "German_DE", "Greek, Modern (1453–)_EL", "Kalaallisut, Greenlandic_KL", "Guarani_GN", "Gujarati_GU", "Haitian, Haitian Creole_HT", "Hausa_HA", "Hebrew_HE", "Herero_HZ", "Hiri Motu_HO", "Hungarian_HU", "Icelandic_IS", "Ido_IO", "Igbo_IG", "Indonesian_ID", "Interlingua (IALA)_IA", "Interlingue, Occidental_IE", "Inuktitut_IU", "Inupiaq_IK", "Irish_GA", "Italian_IT", "Japanese_JA", "Javanese_JV", "Kannada_KN", "Kanuri_KR", "Kashmiri_KS", "Kazakh_KK", "Central Khmer_KM", "Kikuyu, Gikuyu_KI", "Kinyarwanda_RW", "Kyrgyz, Kirghiz_KY", "Komi_KV", "Kongo_KG", "Korean_KO", "Kuanyama, Kwanyama_KJ", "Kurdish_KU", "Lao_LO", "Latin_LA", "Latvian_LV", "Limburgan, Limburger, Limburgish_LI", "Lingala_LN", "Lithuanian_LT", "Luba-Katanga_LU", "Luxembourgish, Letzeburgesch_LB", "Macedonian_MK", "Malagasy_MG", "Malay_MS", "Maltese_MT", "Manx_GV", "Maori_MI", "Marathi_MR", "Marshallese_MH", "Mongolian_MN", "Nauru_NA", "Navajo, Navaho_NV", "North Ndebele_ND", "South Ndebele_NR", "Ndonga_NG", "Nepali_NE", "Norwegian_NO", "Norwegian Bokmål_NB", "Norwegian Nynorsk_NN", "Occitan_OC", "Ojibwa_OJ", "Oriya_OR", "Oromo_OM", "Ossetian, Ossetic_OS", "Pali_PI", "Pashto, Pushto_PS", "Persian_FA", "Polish_PL", "Portuguese_PT", "Punjabi, Panjabi_PA", "Quechua_QU", "Romanian, Moldavian, Moldovan_RO", "Romansh_RM", "Rundi_RN", "Russian_RU", "Northern Sami_SE", "Samoan_SM", "Sango_SG", "Sardinian_SC", "Serbian_SR", "Shona_SN", "Sindhi_SD", "Sinhala, Sinhalese_SI", "Slovak_SK", "Slovenian_SL", "Somali_SO", "Southern Sotho_ST", "Spanish, Castilian_ES", "Sundanese_SU", "Swahili_SW", "Swati_SS", "Swedish_SV", "Tagalog_TL", "Tahitian_TY", "Tajik_TG", "Tatar_TT", "Telugu_TE", "Thai_TH", "Tibetan_BO", "Tigrinya_TI", "Tonga (Tonga Islands)_TO", "Tsonga_TS", "Tswana_TN", "Turkish_TR", "Turkmen_TK", "Twi_TW", "Uighur, Uyghur_UG", "Ukrainian_UK", "Urdu_UR", "Uzbek_UZ", "Venda_VE", "Vietnamese_VI", "Volapük_VO", "Walloon_WA", "Welsh_CY", "Wolof_WO", "Xhosa_XH", "Sichuan Yi, Nuosu_II", "Yiddish_YI", "Yoruba_YO", "Zhuang, Chuang_ZA", "Zulu_ZU" }));
         cboLanguage.setMinimumSize(new java.awt.Dimension(64, 24));
         cboLanguage.setPreferredSize(new java.awt.Dimension(64, 24));
 
@@ -461,55 +655,62 @@ public class frmRenamer extends javax.swing.JFrame {
         paneEntry.setLayout(paneEntryLayout);
         paneEntryLayout.setHorizontalGroup(
             paneEntryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, paneEntryLayout.createSequentialGroup()
+            .addGroup(paneEntryLayout.createSequentialGroup()
                 .addGap(16, 16, 16)
                 .addGroup(paneEntryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollBookList)
+                    .addGroup(paneEntryLayout.createSequentialGroup()
+                        .addComponent(lblListHeader)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(paneEntryLayout.createSequentialGroup()
                         .addGroup(paneEntryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblTopic)
-                            .addComponent(cboTopic, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(paneEntryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblTitle)
-                            .addComponent(txtTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(paneEntryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblAuthor)
-                            .addComponent(txtAuthor, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(paneEntryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblYear)
-                            .addComponent(txtYear, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(paneEntryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cboEdition, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblEdition))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(paneEntryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cboLanguage, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblLanguage)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, paneEntryLayout.createSequentialGroup()
-                        .addGroup(paneEntryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(scrollBookList)
                             .addGroup(paneEntryLayout.createSequentialGroup()
-                                .addComponent(lblNote)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(chkAutoNext))
-                            .addGroup(paneEntryLayout.createSequentialGroup()
-                                .addComponent(lblPreview)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(lblLength))
-                            .addComponent(txtPreview))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cmdSetName)))
-                .addGap(16, 16, 16))
+                                .addGroup(paneEntryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblTopic)
+                                    .addComponent(cboTopic, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(paneEntryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblTitle)
+                                    .addComponent(txtTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(paneEntryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblAuthor)
+                                    .addComponent(txtAuthor, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(paneEntryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblYear)
+                                    .addComponent(txtYear, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(paneEntryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(cboEdition, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblEdition))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(paneEntryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(cboLanguage, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblLanguage)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, paneEntryLayout.createSequentialGroup()
+                                .addGroup(paneEntryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(paneEntryLayout.createSequentialGroup()
+                                        .addComponent(lblNote)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(chkAutoNext))
+                                    .addGroup(paneEntryLayout.createSequentialGroup()
+                                        .addComponent(lblPreview)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(lblLength))
+                                    .addComponent(txtPreview))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(cmdSetName)))
+                        .addGap(16, 16, 16))))
         );
         paneEntryLayout.setVerticalGroup(
             paneEntryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(paneEntryLayout.createSequentialGroup()
                 .addGap(8, 8, 8)
-                .addComponent(scrollBookList, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE)
-                .addGap(16, 16, 16)
+                .addComponent(lblListHeader)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(scrollBookList, javax.swing.GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
+                .addGap(14, 14, 14)
                 .addGroup(paneEntryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblLanguage)
                     .addComponent(lblTitle)
@@ -537,67 +738,14 @@ public class frmRenamer extends javax.swing.JFrame {
                 .addGroup(paneEntryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblNote)
                     .addComponent(chkAutoNext))
-                .addGap(16, 16, 16))
+                .addGap(10, 10, 10))
         );
 
         getContentPane().add(paneEntry, java.awt.BorderLayout.CENTER);
 
-        paneActions.setBackground(new java.awt.Color(224, 236, 236));
+        paneActions.setLayout(new java.awt.BorderLayout());
 
-        cmdRenameSelected.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/icons/69-16.png"))); // NOI18N
-        cmdRenameSelected.setText("Rename Selected");
-        cmdRenameSelected.setIconTextGap(8);
-        cmdRenameSelected.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmdRenameSelectedActionPerformed(evt);
-            }
-        });
-
-        cmdRenameAll.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/icons/38-16.png"))); // NOI18N
-        cmdRenameAll.setText("Rename All");
-        cmdRenameAll.setIconTextGap(8);
-        cmdRenameAll.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cmdRenameAllActionPerformed(evt);
-            }
-        });
-
-        paneStatus.setBackground(new java.awt.Color(245, 245, 245));
-
-        lblCompany.setForeground(new java.awt.Color(0, 51, 153));
-        lblCompany.setText("© 2025  J Soft - EBook Renamer Version 1.0.0");
-
-        lblStatus.setBackground(new java.awt.Color(240, 240, 240));
-        lblStatus.setText("Ready - Double Click on Table to Edit and Set name before Renaming");
-
-        jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
-
-        javax.swing.GroupLayout paneStatusLayout = new javax.swing.GroupLayout(paneStatus);
-        paneStatus.setLayout(paneStatusLayout);
-        paneStatusLayout.setHorizontalGroup(
-            paneStatusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(paneStatusLayout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addComponent(lblStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblCompany)
-                .addGap(16, 16, 16))
-        );
-        paneStatusLayout.setVerticalGroup(
-            paneStatusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(paneStatusLayout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addGroup(paneStatusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(paneStatusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(lblStatus, javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(lblCompany)))
-                .addGap(6, 6, 6))
-        );
-
-        paneFolderChoice.setBackground(new java.awt.Color(236, 243, 243));
+        paneFolderChoice.setBackground(new java.awt.Color(146, 239, 220));
 
         chkCreateFolders.setText("Create Topic Folder(s)");
         chkCreateFolders.setActionCommand("Create Topic Folder and Move Files to It.");
@@ -634,54 +782,82 @@ public class frmRenamer extends javax.swing.JFrame {
             paneFolderChoiceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(paneFolderChoiceLayout.createSequentialGroup()
                 .addGap(16, 16, 16)
-                .addGroup(paneFolderChoiceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(paneFolderChoiceLayout.createSequentialGroup()
-                        .addComponent(chkMoveToFolder)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtMoveToFolder, javax.swing.GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cmdBrowse))
-                    .addComponent(chkCreateFolders))
-                .addGap(16, 16, 16))
+                .addComponent(chkCreateFolders)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(chkMoveToFolder)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtMoveToFolder, javax.swing.GroupLayout.DEFAULT_SIZE, 261, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cmdBrowse)
+                .addGap(32, 32, 32))
         );
         paneFolderChoiceLayout.setVerticalGroup(
             paneFolderChoiceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(paneFolderChoiceLayout.createSequentialGroup()
-                .addGap(16, 16, 16)
+                .addGap(18, 18, 18)
                 .addGroup(paneFolderChoiceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(chkCreateFolders)
                     .addComponent(chkMoveToFolder)
                     .addComponent(txtMoveToFolder, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cmdBrowse, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(chkCreateFolders)
-                .addGap(16, 16, 16))
+                .addGap(10, 10, 10))
         );
 
-        javax.swing.GroupLayout paneActionsLayout = new javax.swing.GroupLayout(paneActions);
-        paneActions.setLayout(paneActionsLayout);
-        paneActionsLayout.setHorizontalGroup(
-            paneActionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(paneStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(paneActionsLayout.createSequentialGroup()
-                .addComponent(paneFolderChoice, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(120, 120, 120)
+        paneActions.add(paneFolderChoice, java.awt.BorderLayout.CENTER);
+
+        paneAction.setBackground(new java.awt.Color(188, 245, 233));
+
+        cmdRenameSelected.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/icons/69-16.png"))); // NOI18N
+        cmdRenameSelected.setText("Rename Selected");
+        cmdRenameSelected.setIconTextGap(8);
+        cmdRenameSelected.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdRenameSelectedActionPerformed(evt);
+            }
+        });
+
+        cmdRenameAll.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/icons/38-16.png"))); // NOI18N
+        cmdRenameAll.setText("Rename All");
+        cmdRenameAll.setIconTextGap(8);
+        cmdRenameAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdRenameAllActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout paneActionLayout = new javax.swing.GroupLayout(paneAction);
+        paneAction.setLayout(paneActionLayout);
+        paneActionLayout.setHorizontalGroup(
+            paneActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(paneActionLayout.createSequentialGroup()
+                .addGap(32, 32, 32)
                 .addComponent(cmdRenameSelected)
                 .addGap(18, 18, 18)
                 .addComponent(cmdRenameAll)
                 .addGap(16, 16, 16))
         );
-        paneActionsLayout.setVerticalGroup(
-            paneActionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(paneActionsLayout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addGroup(paneActionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+        paneActionLayout.setVerticalGroup(
+            paneActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(paneActionLayout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addGroup(paneActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(cmdRenameAll, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cmdRenameSelected, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(paneFolderChoice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, 0)
-                .addComponent(paneStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0))
+                    .addComponent(cmdRenameSelected, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(14, 14, 14))
         );
+
+        paneActions.add(paneAction, java.awt.BorderLayout.EAST);
+
+        paneStatus.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 16, 4, 16));
+        paneStatus.setLayout(new java.awt.BorderLayout());
+
+        lblStatus.setText("Ready - Double Click on Table to Edit and Set name before Renaming");
+        paneStatus.add(lblStatus, java.awt.BorderLayout.CENTER);
+
+        lblCompany.setText("company");
+        paneStatus.add(lblCompany, java.awt.BorderLayout.EAST);
+
+        paneActions.add(paneStatus, java.awt.BorderLayout.SOUTH);
 
         getContentPane().add(paneActions, java.awt.BorderLayout.PAGE_END);
 
@@ -689,239 +865,235 @@ public class frmRenamer extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void chkCreateFoldersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkCreateFoldersActionPerformed
-	// TODO add your handling code here:
+        // TODO add your handling code here:
     }//GEN-LAST:event_chkCreateFoldersActionPerformed
 
     private void cmdChooseFilesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdChooseFilesActionPerformed
 
-	JFileChooser fileChooser = new JFileChooser("D:\\");
-	fileChooser.setMultiSelectionEnabled(true);
-	fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-	fileChooser.setAcceptAllFileFilterUsed(false);
-	fileChooser.setFileFilter(new FileNameExtensionFilter(
-		"eBooks (*.epub, *.pdf, *.mobi, *.azw, *.azw3, *.fb2, *.djvu, *.lit, *.rtf, *.txt, *.chm, *.cbz, *.cbr)",
-		"epub", "pdf", "mobi", "azw", "azw3", "fb2", "djvu", "lit", "rtf", "txt", "chm", "cbz", "cbr"
-	));
+        JFileChooser fileChooser = new JFileChooser("D:\\");
+        fileChooser.setMultiSelectionEnabled(true);
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        fileChooser.setFileFilter(new FileNameExtensionFilter(
+                "eBooks (*.epub, *.pdf, *.mobi, *.azw, *.azw3, *.fb2, *.djvu, *.lit, *.rtf, *.txt, *.chm, *.cbz, *.cbr)",
+                "epub", "pdf", "mobi", "azw", "azw3", "fb2", "djvu", "lit", "rtf", "txt", "chm", "cbz", "cbr"
+        ));
 
-	int result = fileChooser.showOpenDialog(this);
-	if (result == JFileChooser.APPROVE_OPTION) {
+        int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
 
-	    File[] selectedFiles = fileChooser.getSelectedFiles();
+            File[] selectedFiles = fileChooser.getSelectedFiles();
 
-	    if (selectedFiles != null && selectedFiles.length > 0) {
-		Arrays.stream(selectedFiles).forEach(file -> {
+            if (selectedFiles != null && selectedFiles.length > 0) {
+                Arrays.stream(selectedFiles).forEach(file -> {
 
-		    int rows = dtm.getRowCount();
-		    Path path = file.toPath();
-		    String fileName = path.getFileName().toString();
-		    String extension = "";
-		    String nameOnly = fileName;
-		    int dotIndex = fileName.lastIndexOf('.');
+                    int rows = dtm.getRowCount();
+                    Path path = file.toPath();
+                    String fileName = path.getFileName().toString();
+                    String extension = "";
+                    String nameOnly = fileName;
+                    int dotIndex = fileName.lastIndexOf('.');
 
-		    if (dotIndex > 0) {
-			nameOnly = fileName.substring(0, dotIndex);
-			extension = fileName.substring(dotIndex + 1);
-		    }
+                    if (dotIndex > 0) {
+                        nameOnly = fileName.substring(0, dotIndex);
+                        extension = fileName.substring(dotIndex + 1);
+                    }
 
-		    String parent = path.getParent() != null ? path.getParent().toString() : "";
+                    String parent = path.getParent() != null ? path.getParent().toString() : "";
 
-		    dtm.addRow(new Object[]{
-			++rows, nameOnly, extension, "", "", "", "", "", "", "", parent
-		    });
-		    int colW = tblBookList.getColumnModel().getColumn(1).getWidth();
-		    int nameW = metrics.stringWidth(nameOnly);
-		    if (nameW > colW) {
-			colW = nameW >= 600 ? 600 : nameW;
-			tblBookList.getColumnModel().getColumn(1).setPreferredWidth(colW);
-		    }
+                    dtm.addRow(new Object[]{
+                        ++rows, nameOnly, extension, "", "", "", "", "", "", "", parent
+                    });
+                    int colW = tblBookList.getColumnModel().getColumn(1).getWidth();
+                    int nameW = metrics.stringWidth(nameOnly);
+                    if (nameW > colW) {
+                        colW = nameW >= 600 ? 600 : nameW;
+                        tblBookList.getColumnModel().getColumn(1).setPreferredWidth(colW);
+                    }
 
-		});
+                });
 
-	    }
+            }
 
-	}
+        }
 
 
     }//GEN-LAST:event_cmdChooseFilesActionPerformed
 
     private void cmdOpenBookActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdOpenBookActionPerformed
-	int selRow = tblBookList.getSelectedRow();
-	Path filePath = Paths.get(tblBookList.getValueAt(selRow, 10).toString() + "\\"
-		+ tblBookList.getValueAt(selRow, 1).toString() + "."
-		+ tblBookList.getValueAt(selRow, 2).toString());
-	if (Desktop.isDesktopSupported()) {
-	    try {
-		Desktop.getDesktop().open(filePath.toFile());
-	    } catch (IOException e) {
-		System.out.println("Exception from opening book : -- \n" + e.getMessage());
-	    }
-	}
+        int selRow = tblBookList.getSelectedRow();
+        Path filePath = Paths.get(tblBookList.getValueAt(selRow, 10).toString() + "\\"
+                + tblBookList.getValueAt(selRow, 1).toString() + "."
+                + tblBookList.getValueAt(selRow, 2).toString());
+        if (Desktop.isDesktopSupported()) {
+            try {
+                Desktop.getDesktop().open(filePath.toFile());
+            } catch (IOException e) {
+                System.out.println("Exception from opening book : -- \n" + e.getMessage());
+            }
+        }
     }//GEN-LAST:event_cmdOpenBookActionPerformed
 
     private void cmdChooseFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdChooseFolderActionPerformed
 
-	JFileChooser fileChooser = new JFileChooser();
-	fileChooser.setMultiSelectionEnabled(false);
-	fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-	fileChooser.setAcceptAllFileFilterUsed(false);
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setMultiSelectionEnabled(false);
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fileChooser.setAcceptAllFileFilterUsed(false);
 
-	int result = fileChooser.showOpenDialog(this);
-	if (result == JFileChooser.APPROVE_OPTION) {
-	    Path selectedPath = fileChooser.getSelectedFile().toPath();
-	    String parent = selectedPath.toAbsolutePath().toString();
-	    final List<String> EBOOK_EXTENSIONS = Arrays.asList(
-		    "epub", "mobi", "azw", "azw3", "pdf", "fb2", "djvu", "lit", "rtf", "txt", "chm", "cbz", "cbr"
-	    );
+        int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            Path selectedPath = fileChooser.getSelectedFile().toPath();
+            String parent = selectedPath.toAbsolutePath().toString();
+            final List<String> EBOOK_EXTENSIONS = Arrays.asList(
+                    "epub", "mobi", "azw", "azw3", "pdf", "fb2", "djvu", "lit", "rtf", "txt", "chm", "cbz", "cbr"
+            );
 
-	    try (Stream<Path> files = Files.list(selectedPath)) {
-		files.filter(Files::isRegularFile) // only files, no directories
-			.forEach(path -> {
-			    String fullName = new String(path.getFileName().toString().getBytes(), StandardCharsets.UTF_8);
-			    int dotPos = fullName.lastIndexOf('.');
-			    String nameOnly = (dotPos > 0) ? fullName.substring(0, dotPos) : fullName;
-			    String extension = (dotPos > 0) ? fullName.substring(dotPos + 1) : "";
+            try (Stream<Path> files = Files.list(selectedPath)) {
+                files.filter(Files::isRegularFile) // only files, no directories
+                        .forEach(path -> {
+                            String fullName = new String(path.getFileName().toString().getBytes(), StandardCharsets.UTF_8);
+                            int dotPos = fullName.lastIndexOf('.');
+                            String nameOnly = (dotPos > 0) ? fullName.substring(0, dotPos) : fullName;
+                            String extension = (dotPos > 0) ? fullName.substring(dotPos + 1) : "";
 
-			    boolean isValidExt;
-			    for (String ext : EBOOK_EXTENSIONS) {
-				isValidExt = extension.trim().equalsIgnoreCase(ext);
-				if (isValidExt) {
-				    dtm.addRow(new Object[]{dtm.getRowCount() + 1, nameOnly, extension, "", "", "", "", "", "", "", parent});
+                            boolean isValidExt;
+                            for (String ext : EBOOK_EXTENSIONS) {
+                                isValidExt = extension.trim().equalsIgnoreCase(ext);
+                                if (isValidExt) {
+                                    dtm.addRow(new Object[]{dtm.getRowCount() + 1, nameOnly, extension, "", "", "", "", "", "", "", parent});
 
-				    int colW = tblBookList.getColumnModel().getColumn(1).getWidth();
-				    int nameW = metrics.stringWidth(nameOnly);
-				    if (nameW > colW) {
-					colW = nameW >= 600 ? 600 : nameW;
-					tblBookList.getColumnModel().getColumn(1).setPreferredWidth(colW);
-				    }
-				    break;
-				}
-			    }
+                                    int colW = tblBookList.getColumnModel().getColumn(1).getWidth();
+                                    int nameW = metrics.stringWidth(nameOnly);
+                                    if (nameW > colW) {
+                                        colW = nameW >= 600 ? 600 : nameW;
+                                        tblBookList.getColumnModel().getColumn(1).setPreferredWidth(colW);
+                                    }
+                                    break;
+                                }
+                            }
 
-			});
-	    } catch (IOException e) {
-		System.out.println("Exception from choosing folder : -- " + e.getMessage());
-	    }
-	}
+                        });
+            } catch (IOException e) {
+                System.out.println("Exception from choosing folder : -- " + e.getMessage());
+            }
+        }
 
     }//GEN-LAST:event_cmdChooseFolderActionPerformed
 
     private void txtYearKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtYearKeyTyped
-	if (!Character.isDigit(evt.getKeyChar()) || txtYear.getText().length() >= 4) {
-	    evt.consume();
-	    return;
-	}
+        if (!Character.isDigit(evt.getKeyChar()) || txtYear.getText().length() >= 4) {
+            evt.consume();
+            return;
+        }
     }//GEN-LAST:event_txtYearKeyTyped
 
     private void tblBookListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblBookListMouseClicked
 
-	if (evt.getClickCount() == 2) {
-	    editRow = tblBookList.getSelectedRow();
-	    readTableRow();
-	}
+        if (evt.getClickCount() == 2) {
+            editRow = tblBookList.getSelectedRow();
+            readTableRow();
+        }
     }//GEN-LAST:event_tblBookListMouseClicked
 
     private void txtTitleFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTitleFocusGained
-	txtTitle.selectAll();
+        txtTitle.selectAll();
     }//GEN-LAST:event_txtTitleFocusGained
 
     private void txtAuthorFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAuthorFocusGained
-	txtAuthor.selectAll();
+//        txtAuthor.selectAll();
     }//GEN-LAST:event_txtAuthorFocusGained
 
     private void txtYearFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtYearFocusGained
-	txtYear.selectAll();
+//        txtYear.selectAll();
     }//GEN-LAST:event_txtYearFocusGained
-
-    private void cboTopicFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cboTopicFocusGained
-
-	cboTopic.getEditor().selectAll();
-    }//GEN-LAST:event_cboTopicFocusGained
 
     private void cmdRemoveAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdRemoveAllActionPerformed
 
-	int result = JOptionPane.showConfirmDialog(this, "Are you sure to Remove all items list?", "Clear Confirmation", JOptionPane.YES_NO_OPTION);
-	if (result == JOptionPane.YES_OPTION) {
-	    dtm.setRowCount(0);
-	    // set edit row is nothing
-	    editRow = -1;
-	    
-	    clearFields();
-	}
+        int result = JOptionPane.showConfirmDialog(this, "Are you sure to Remove all items list?", "Clear Confirmation", JOptionPane.YES_NO_OPTION);
+        if (result == JOptionPane.YES_OPTION) {
+            dtm.setRowCount(0);
+            // set edit row is nothing
+            editRow = -1;
+
+            clearFields();
+        }
     }//GEN-LAST:event_cmdRemoveAllActionPerformed
 
     private void cmdRemoveSelectedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdRemoveSelectedActionPerformed
-	
-	int result = JOptionPane.showConfirmDialog(this, "Are you sure to Remove selected items list?", "Removal Confirmation", JOptionPane.YES_NO_OPTION);
-	if (result == JOptionPane.YES_OPTION) {	    
-	    int[] selectedRows = tblBookList.getSelectedRows();
 
-	    // Convert view indices to model indices
-	    List<Integer> modelIndices = Arrays.stream(selectedRows)
-		    .map(tblBookList::convertRowIndexToModel)
-		    .boxed()
-		    .sorted(Collections.reverseOrder()) // remove from bottom up
-		    .collect(Collectors.toList());
+        int result = JOptionPane.showConfirmDialog(this, "Are you sure to Remove selected items list?", "Removal Confirmation", JOptionPane.YES_NO_OPTION);
+        if (result == JOptionPane.YES_OPTION) {
+            int[] selectedRows = tblBookList.getSelectedRows();
 
-	    // Remove rows
-	    for (int rowIndex : modelIndices) {
-		dtm.removeRow(rowIndex);
-	    }
-	    // set edit row is nothing
-	    editRow = -1;
-	    
-	    // renumber row
-	    for (int i = 0; i < tblBookList.getRowCount(); i++) {
-		tblBookList.setValueAt(i + 1, i, 0);
-	    }
-	    clearFields();
-	}
+            // Convert view indices to model indices
+            List<Integer> modelIndices = Arrays.stream(selectedRows)
+                    .map(tblBookList::convertRowIndexToModel)
+                    .boxed()
+                    .sorted(Collections.reverseOrder()) // remove from bottom up
+                    .collect(Collectors.toList());
+
+            // Remove rows
+            for (int rowIndex : modelIndices) {
+                dtm.removeRow(rowIndex);
+            }
+            // set edit row is nothing
+            editRow = -1;
+
+            // renumber row
+            for (int i = 0; i < tblBookList.getRowCount(); i++) {
+                tblBookList.setValueAt(i + 1, i, 0);
+            }
+            clearFields();
+        }
 
     }//GEN-LAST:event_cmdRemoveSelectedActionPerformed
 
-    private void cboTopicInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_cboTopicInputMethodTextChanged
-
-	buildPreviewName();
-    }//GEN-LAST:event_cboTopicInputMethodTextChanged
-
     private void cmdSetNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdSetNameActionPerformed
 
-	writeTableRow();
+        writeTableRow();
     }//GEN-LAST:event_cmdSetNameActionPerformed
 
     private void cmdRenameAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdRenameAllActionPerformed
-	int[] rowIndex = new int[tblBookList.getRowCount()];
-	for (int i =0;i<tblBookList.getRowCount();i++)
-	    rowIndex[i]= i;
-	 renameAt(rowIndex);
+        int[] rowIndex = new int[tblBookList.getRowCount()];
+        for (int i = 0; i < tblBookList.getRowCount(); i++) {
+            rowIndex[i] = i;
+        }
+        renameAt(rowIndex);
     }//GEN-LAST:event_cmdRenameAllActionPerformed
 
     private void cmdRenameSelectedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdRenameSelectedActionPerformed
 
-	renameAt(tblBookList.getSelectedRows());
+        renameAt(tblBookList.getSelectedRows());
     }//GEN-LAST:event_cmdRenameSelectedActionPerformed
 
     private void chkMoveToFolderItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_chkMoveToFolderItemStateChanged
-	txtMoveToFolder.setEnabled(chkMoveToFolder.isSelected());
-	cmdBrowse.setEnabled(chkMoveToFolder.isSelected());
+        txtMoveToFolder.setEnabled(chkMoveToFolder.isSelected());
+        cmdBrowse.setEnabled(chkMoveToFolder.isSelected());
     }//GEN-LAST:event_chkMoveToFolderItemStateChanged
 
     private void cmdBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdBrowseActionPerformed
-	JFileChooser fileChooser = new JFileChooser();
-	fileChooser.setMultiSelectionEnabled(false);
-	fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-	fileChooser.setAcceptAllFileFilterUsed(false);
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setMultiSelectionEnabled(false);
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fileChooser.setAcceptAllFileFilterUsed(false);
 
-	int result = fileChooser.showOpenDialog(this);
-	if (result == JFileChooser.APPROVE_OPTION) {
-	    txtMoveToFolder.setText(fileChooser.getSelectedFile().getAbsolutePath());
-	}
-	
+        int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            txtMoveToFolder.setText(fileChooser.getSelectedFile().getAbsolutePath());
+        }
+
     }//GEN-LAST:event_cmdBrowseActionPerformed
+
+    private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
+
+        repaint();
+    }//GEN-LAST:event_formWindowActivated
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cboEdition;
-    private javax.swing.JComboBox<String> cboLanguage;
+    private javax.swing.JComboBox<LanguageItem> cboLanguage;
     private javax.swing.JComboBox<String> cboTopic;
     private javax.swing.JCheckBox chkAutoNext;
     private javax.swing.JCheckBox chkCreateFolders;
@@ -935,18 +1107,20 @@ public class frmRenamer extends javax.swing.JFrame {
     private javax.swing.JButton cmdRenameAll;
     private javax.swing.JButton cmdRenameSelected;
     private javax.swing.JButton cmdSetName;
-    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JLabel lblAppTitle;
     private javax.swing.JLabel lblAuthor;
     private javax.swing.JLabel lblCompany;
     private javax.swing.JLabel lblEdition;
     private javax.swing.JLabel lblLanguage;
     private javax.swing.JLabel lblLength;
+    private javax.swing.JLabel lblListHeader;
     private javax.swing.JLabel lblNote;
     private javax.swing.JLabel lblPreview;
     private javax.swing.JLabel lblStatus;
     private javax.swing.JLabel lblTitle;
     private javax.swing.JLabel lblTopic;
     private javax.swing.JLabel lblYear;
+    private javax.swing.JPanel paneAction;
     private javax.swing.JPanel paneActions;
     private javax.swing.JPanel paneEntry;
     private javax.swing.JPanel paneFolderChoice;
@@ -962,283 +1136,368 @@ public class frmRenamer extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     void buildPreviewName() {
-	if(editRow<0)
-	    return;
+        if (editRow < 0) {
+            return;
+        }
 
-	previewname = new StringBuilder();
+        previewname = new StringBuilder();
 
-	if (!topicEditor.getText().isBlank()) {
+        if (!topicEditor.getText().isBlank()) {
 //		previewname.append(sanitize(cboTopic.getSelectedItem().toString())).append("_");
-	    previewname.append(sanitize(topicEditor.getText())).append("_");
-	}
+            previewname.append(sanitize(topicEditor.getText())).append("_");
+        }
 
-	if (!txtTitle.getText().isBlank()) {
-	    previewname.append(sanitize(txtTitle.getText())).append("_");
-	}
-	
-	if (!txtAuthor.getText().isBlank()) {
-	    previewname.append("By_").append(sanitize(txtAuthor.getText())).append("_");
-	}
-	if (!txtYear.getText().isBlank()) {
-	    previewname.append(txtYear.getText()).append("_");
-	}
-	previewname.append("Ed_").append(cboEdition.getSelectedItem().toString()).append("_");
-	previewname.append(cboLanguage.getSelectedItem().toString().substring(cboLanguage.getSelectedItem().toString().lastIndexOf('_') + 1));
+        if (!txtTitle.getText().isBlank()) {
+            previewname.append(sanitize(txtTitle.getText())).append("_");
+        }
 
-	if (previewname.length() >= 250) {
-	    lblLength.setForeground(Color.red);
-	    previewname.setLength(250);
-	} else {
-	    lblLength.setForeground(Color.black);
-	}
-	lblLength.setText("Filename Length : " + previewname.length() + " / 250  ( " + (250 - previewname.length()) + " left )");
+        if (!txtAuthor.getText().isBlank()) {
+            previewname.append("By_").append(sanitize(txtAuthor.getText())).append("_");
+        }
+        if (!txtYear.getText().isBlank()) {
+            previewname.append(txtYear.getText()).append("_");
+        }
+        previewname.append("Ed_").append(cboEdition.getSelectedItem().toString()).append("_");
+        previewname.append(((LanguageItem) cboLanguage.getSelectedItem()).getId());
+        //  previewname.append(cboLanguage.getSelectedItem().toString().substring(cboLanguage.getSelectedItem().toString().lastIndexOf('_') + 1));
 
-    	txtPreview.setText(previewname.toString() + "." + tblBookList.getValueAt(editRow, 2).toString());
+        if (previewname.length() >= 250) {
+            lblLength.setForeground(Color.red);
+            previewname.setLength(250);
+        } else {
+            lblLength.setForeground(Color.black);
+        }
+        lblLength.setText("Filename Length : " + previewname.length() + " / 250  ( " + (250 - previewname.length()) + " left )");
+
+        txtPreview.setText(previewname.toString() + "." + tblBookList.getValueAt(editRow, 2).toString());
 
     }
 
     public static String sanitize(String input) {
-	// Step 1: Replace reserved characters with "-"
-	String cleaned = input.replaceAll("[\\\\/:*?\"<>|., `=]", "-");
+        if (input.trim().isEmpty()) {
+            return "";
+        }
+        // Step 1: Replace reserved characters with "-"
+        String cleaned = input.replaceAll("[\\\\/:*?\"<>|., `=]", "-");
 
-	// Step 2: Replace multiple "-" with single "-"
-	cleaned = cleaned.replaceAll("-{2,}", "-");
+        // Step 2: Replace multiple "-" with single "-"
+        cleaned = cleaned.replaceAll("-{2,}", "-");
 
-	// Step 3: Trim leading/trailing "-"
-	cleaned = cleaned.replaceAll("^-+", "").replaceAll("-+$", "");
+        // Step 3: Trim leading/trailing "-"
+        cleaned = cleaned.replaceAll("^-+", "").replaceAll("-+$", "");
 
-	// Step 4: Title case each word, without altering existing uppercase
-	String[] words = cleaned.split("-");
-	StringBuilder result = new StringBuilder();
+        // Step 4: Title case each word, without altering existing uppercase
+        String[] words = cleaned.split("-");
+        StringBuilder result = new StringBuilder();
 
-	for (String word : words) {
-	    if (!word.isEmpty()) {
-		char first = word.charAt(0);
-		String rest = word.length() > 1 ? word.substring(1) : "";
-		result.append(Character.toUpperCase(first)).append(rest).append("-");
-	    }
-	}
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                char first = word.charAt(0);
+                String rest = word.length() > 1 ? word.substring(1) : "";
+                result.append(Character.toUpperCase(first)).append(rest).append("-");
+            }
+        }
 
-	// Remove trailing "-"
-	if (result.length() > 0 && result.charAt(result.length() - 1) == '-') {
-	    result.setLength(result.length() - 1);
-	}
+        // Remove trailing "-"
+        if (result.length() > 0 && result.charAt(result.length() - 1) == '-') {
+            result.setLength(result.length() - 1);
+        }
 
-	return result.toString();
+        return result.toString();
     }
 
     private void readTableRow() {
-	if (editRow >= 0) {
-	    cboTopic.setSelectedItem(tblBookList.getValueAt(editRow, 4).toString());
-	    txtTitle.setText(tblBookList.getValueAt(editRow, 5).toString().isBlank() ? tblBookList.getValueAt(editRow, 1).toString() : tblBookList.getValueAt(editRow, 5).toString());
-	    txtAuthor.setText(tblBookList.getValueAt(editRow, 6).toString());
-	    txtYear.setText(tblBookList.getValueAt(editRow, 7).toString());
-	 
-	    cboEdition.setSelectedIndex(0);
-	    if (!tblBookList.getValueAt(editRow, 8).toString().isBlank()) {
-		cboEdition.setSelectedItem(tblBookList.getValueAt(editRow, 8).toString());
-	    }
+        if (editRow >= 0) {
+            cboTopic.setSelectedItem(tblBookList.getValueAt(editRow, 4).toString());
+            txtTitle.setText(tblBookList.getValueAt(editRow, 5).toString().isBlank() ? tblBookList.getValueAt(editRow, 1).toString() : tblBookList.getValueAt(editRow, 5).toString());
+            txtAuthor.setText(tblBookList.getValueAt(editRow, 6).toString());
+            txtYear.setText(tblBookList.getValueAt(editRow, 7).toString());
 
-	    String langCode = tblBookList.getValueAt(editRow, 9).toString();
-	    cboLanguage.setSelectedIndex(0);
-	    for (int i = 0; i < cboLanguage.getItemCount(); i++) {
-		if (cboLanguage.getItemAt(i).endsWith(langCode)) {
-		    cboLanguage.setSelectedIndex(i);
-		    break;
-		}
-	    }
-	}
+            cboEdition.setSelectedIndex(0);
+            if (!tblBookList.getValueAt(editRow, 8).toString().isBlank()) {
+                cboEdition.setSelectedItem(tblBookList.getValueAt(editRow, 8).toString());
+            }
+
+            String langCode = tblBookList.getValueAt(editRow, 9).toString();
+            cboLanguage.setSelectedIndex(0);
+            for (int i = 0; i < cboLanguage.getItemCount(); i++) {
+                if (cboLanguage.getItemAt(i).toString().endsWith(langCode)) {
+                    cboLanguage.setSelectedIndex(i);
+                    break;
+                }
+            }
+            cboTopic.requestFocusInWindow();
+        }
     }
 
     private void writeTableRow() {
-	if (editRow < 0) {
-	    return;
-	}
+        if (editRow < 0) {
+            return;
+        }
 
-	tblBookList.setValueAt(txtPreview.getText(), editRow, 3);
-	tblBookList.setValueAt(topicEditor.getText(), editRow, 4);
-	tblBookList.setValueAt(txtTitle.getText(), editRow, 5);
-	tblBookList.setValueAt(txtAuthor.getText(), editRow, 6);
-	tblBookList.setValueAt(txtYear.getText(), editRow, 7);
-	tblBookList.setValueAt(cboEdition.getSelectedItem().toString(), editRow, 8);
-	tblBookList.setValueAt(cboLanguage.getSelectedItem().toString().substring(cboLanguage.getSelectedItem().toString().lastIndexOf('_') + 1), editRow, 9);
+        tblBookList.setValueAt(txtPreview.getText(), editRow, 3);
+        tblBookList.setValueAt(topicEditor.getText(), editRow, 4);
+        tblBookList.setValueAt(txtTitle.getText(), editRow, 5);
+        tblBookList.setValueAt(txtAuthor.getText(), editRow, 6);
+        tblBookList.setValueAt(txtYear.getText(), editRow, 7);
+        tblBookList.setValueAt(cboEdition.getSelectedItem().toString(), editRow, 8);
+        tblBookList.setValueAt(cboLanguage.getSelectedItem().toString().substring(cboLanguage.getSelectedItem().toString().lastIndexOf('_') + 1), editRow, 9);
 
-	if (chkAutoNext.isSelected()) {
-	    if ((tblBookList.getRowCount() - 1) >= (editRow + 1)) {
-		++editRow;
-		tblBookList.getSelectionModel().setSelectionInterval(editRow, editRow);
-		readTableRow();
-	    }
-	} else {
-	    clearFields();
-	}
+        if (chkAutoNext.isSelected()) {
+            if ((tblBookList.getRowCount() - 1) >= (editRow + 1)) {
+                ++editRow;
+                tblBookList.getSelectionModel().setSelectionInterval(editRow, editRow);
+                readTableRow();
+            }
+        } else {
+            clearFields();
+        }
     }
 
     private void clearFields() {
-	cboTopic.setSelectedIndex(-1);
-	txtTitle.setText("");
-	txtAuthor.setText("");
-	txtYear.setText("");
-	cboEdition.setSelectedIndex(0);
-	cboLanguage.setSelectedIndex(0);
-	txtPreview.setText("");
-	editRow = -1;
-	renameresult.clear();
+//	cboTopic.setSelectedIndex(-1);
+        txtTitle.setText("");
+        txtAuthor.setText("");
+        txtYear.setText("");
+//        cboEdition.setSelectedIndex(0);
+//        cboLanguage.setSelectedIndex(0);
+        txtPreview.setText("");
+        editRow = -1;
+        renameresult.clear();
     }
 
     /*
     @parameter int result  : 0 for error, 1 for success, 2 for no file found
-    */
-    
-    
-    
+     */
     void renameAt(int[] rowIndex) {
-	
-	renameresult = new HashMap();	
-	clearFields();
-	tblBookList.getSelectionModel().clearSelection();
-	
-	renamecout   = rowIndex.length;
-	successcount = 0;                                
-	errorcount   = 0;                                
-	warningcount = 0;
-	
-	for (int row : rowIndex) {
 
-	    if (!tblBookList.getValueAt(row, 3).toString().isBlank()) // if there's a new name
-	    {		
-		Path orgFolderPath = Paths.get(tblBookList.getValueAt(row, 10).toString());              // from col 10 original parent folder path
-		Path orgFilePath   = orgFolderPath.resolve(tblBookList.getValueAt(row, 1).toString()     // from col 1 original filename
-							+ "." 
-							+ tblBookList.getValueAt(row, 2).toString());    // from col 2 original extension
+        renameresult = new HashMap();
+        clearFields();
+        tblBookList.getSelectionModel().clearSelection();
+
+        renamecout = rowIndex.length;
+        successcount = 0;
+        errorcount = 0;
+        warningcount = 0;
+
+        for (int row : rowIndex) {
+
+            if (!tblBookList.getValueAt(row, 3).toString().isBlank()) // if there's a new name
+            {
+                Path orgFolderPath = Paths.get(tblBookList.getValueAt(row, 10).toString());              // from col 10 original parent folder path
+                Path orgFilePath = orgFolderPath.resolve(tblBookList.getValueAt(row, 1).toString() // from col 1 original filename
+                        + "."
+                        + tblBookList.getValueAt(row, 2).toString());    // from col 2 original extension
 //		check if move to folder is enabled
-		Path tarFolderPath = (chkMoveToFolder.isSelected() && !txtMoveToFolder.getText().isBlank())
-					? Paths.get(txtMoveToFolder.getText())
-					:orgFolderPath;			
-		
-		String topicName   = tblBookList.getValueAt(row, 4).toString();                          // column 4 - new generated name
-		
-//		check if new topic folder creation enabled
-		if (chkCreateFolders.isSelected() && !topicName.isBlank()) {
-//		    check if topic directory already exist
-		    Path topicPath = tarFolderPath.resolve(topicName);
-		    try {
-			if (Files.notExists(topicPath)) 
-//			 if topic folder dont exist
-			{
-//			    create a topic folder
-			    Files.createDirectory(topicPath);
-			}
-			tarFolderPath = topicPath;
-		    } catch (IOException ex) {
-//			    if can create folder break loop and move for next
-			++errorcount;
-			renameresult.put(row, 4);
-		    }
-		}
-		
-		Path tarFilePath   = tarFolderPath.resolve(tblBookList.getValueAt(row, 3).toString());	// from col 3 target filename		    
+                Path tarFolderPath = (chkMoveToFolder.isSelected() && !txtMoveToFolder.getText().isBlank())
+                        ? Paths.get(txtMoveToFolder.getText())
+                        : orgFolderPath;
 
-		try {
-		    if (Files.exists(orgFilePath)) {
-			Files.move(orgFilePath, tarFilePath);
-			++successcount;
-			renameresult.put(row, 1); // put success
+                String topicName = tblBookList.getValueAt(row, 4).toString();                          // column 4 - new generated name
+
+//		check if new topic folder creation enabled
+                if (chkCreateFolders.isSelected() && !topicName.isBlank()) {
+//		    check if topic directory already exist
+                    Path topicPath = tarFolderPath.resolve(topicName);
+                    try {
+                        if (Files.notExists(topicPath)) //			 if topic folder dont exist
+                        {
+//			    create a topic folder
+                            Files.createDirectory(topicPath);
+                        }
+                        tarFolderPath = topicPath;
+                    } catch (IOException ex) {
+//			    if can create folder break loop and move for next
+                        ++errorcount;
+                        renameresult.put(row, 4);
+                    }
+                }
+
+                Path tarFilePath = tarFolderPath.resolve(tblBookList.getValueAt(row, 3).toString());	// from col 3 target filename		    
+
+                try {
+                    if (Files.exists(orgFilePath)) {
+                        Files.move(orgFilePath, tarFilePath);
+                        ++successcount;
+                        renameresult.put(row, 1); // put success
 //			System.out.println("Renamed: " + actualName + "." + extension + " → " + newName);
 
-		    } else {
-			++warningcount;
-			renameresult.put(row, 2); // put not found flag
+                    } else {
+                        ++warningcount;
+                        renameresult.put(row, 2); // put not found flag
 //			System.out.println("Original file not found: " + originalPath.getFileName());
-		    }
-		} catch (IOException e) {
-		    ++errorcount;
-		    renameresult.put(row, 0); // put error flag
+                    }
+                } catch (IOException e) {
+                    ++errorcount;
+                    renameresult.put(row, 0); // put error flag
 //		    System.out.println("Error renaming file: " + e.getMessage());
-		}
-	    } else // if there is no new name
-	    {
-		tblBookList.setValueAt("-- No Name to Rename --", row, 3);
-	    }
+                }
+            } else // if there is no new name
+            {
+                tblBookList.setValueAt("-- No Name to Rename --", row, 3);
+            }
 
-	}
-	
-	
-	StringBuilder sb = new StringBuilder("<html>");
-	sb.append(tblBookList.getRowCount()).append(" Files for Renaming ");
-	sb.append(" | <font color=\"blue\"><b>Processed : </b></font>").append(renamecout);
-	sb.append(" | <font color=\"Green\"><b>Success : </b></font>").append(successcount);
-	sb.append(" | <font color=\"Red\"><b>Error : </b></font>").append(errorcount);
-	sb.append(" | <font color=\"orange\"><b>Not Found : </b></font>").append(warningcount);
-	sb.append("</html>");
+        }
 
-	lblStatus.setText(sb.toString());
-	
+        StringBuilder sb = new StringBuilder("<html>");
+        sb.append(tblBookList.getRowCount()).append(" Files for Renaming ");
+        sb.append(" | <font color=\"blue\"><b>Processed : </b></font>").append(renamecout);
+        sb.append(" | <font color=\"Green\"><b>Success : </b></font>").append(successcount);
+        sb.append(" | <font color=\"Red\"><b>Error : </b></font>").append(errorcount);
+        sb.append(" | <font color=\"orange\"><b>Not Found : </b></font>").append(warningcount);
+        sb.append("</html>");
+
+        lblStatus.setText(sb.toString());
+
 //	System.out.println("rename result : " + renameresult.toString());
-	
-	setCellColor();
-	JOptionPane.showMessageDialog(this, "Finished Renaming Files.");
-	
+        setCellColor();
+        JOptionPane.showMessageDialog(this, "Finished Renaming Files.");
+
     }
-    
+
 //    void setCellColor(int result, int targetRow, int targetCol) {
     void setCellColor() {
-	DefaultTableCellRenderer cellRenderer;
-	cellRenderer = new DefaultTableCellRenderer() {
-	    int topPadding    = 4;
-	    int leftPadding   = 8;
-	    int bottomPadding = 4;
-	    int rightPadding  = 8;
+        DefaultTableCellRenderer cellRenderer;
+        cellRenderer = new DefaultTableCellRenderer() {
+            int topPadding = 4;
+            int leftPadding = 8;
+            int bottomPadding = 4;
+            int rightPadding = 8;
 
-	    @Override
-	    public Component getTableCellRendererComponent(JTable table, Object value,
-									 boolean isSelected, boolean hasFocus, int row, int column) {
-		
-		super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-		setBorder(new EmptyBorder(topPadding, leftPadding, bottomPadding, rightPadding));
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+
+                super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                setBorder(new EmptyBorder(topPadding, leftPadding, bottomPadding, rightPadding));
 //		System.out.println("from rendere  - row index : " + row);
-		 
-		int result =(renameresult.get(row)!=null)?renameresult.get(row):-1;
 
-		if (isSelected) {
-		    setForeground(defaultTableSelForeground);
-		    setBackground(defaultTableSelBackground);
-		} 
-		else {
-		    setFont(getFont().deriveFont(Font.BOLD));
-		    switch (result) {			    
-			case 0: // error
-			    setForeground(new Color(0xF3D2D5));  // red
-			    setBackground(new Color(0xAF3514));
-			    break;
-			case 1: // success
-			    setForeground(new Color(0x00881C)); // green
-			    setBackground(new Color(0xCCFFCC));
-			    break;
-			case 2: // warning not found
-			    setForeground(new Color(0xFF8732)); // orange
-			    setBackground(new Color(0xFFE9DA));
-			    break;
-			case 3: // warning not found
-			    setForeground(new Color(0xD1E8FF)); // blue
-			    setBackground(new Color(0x005AB5));
-			    break;
-			case 4: // warning not found
-			    setForeground(new Color(0xFFEFE0)); // other orange
-			    setBackground(new Color(0xD86C00));
-			    break;
-			default:
-			    setForeground(defaultTableForeground);
-			    setBackground(defaultTableBackground);
-			    setFont(getFont().deriveFont(Font.PLAIN));
-			    break;
-		    }			
-		}
+                int result = (renameresult.get(row) != null) ? renameresult.get(row) : -1;
 
-		return this;
-	    }
-	};
-	tblBookList.getColumnModel().getColumn(1).setCellRenderer(cellRenderer);
-	tblBookList.repaint();
+                if (isSelected) {
+                    setForeground(defaultTableSelForeground);
+                    setBackground(defaultTableSelBackground);
+                } else {
+                    setFont(getFont().deriveFont(Font.BOLD));
+                    switch (result) {
+                        case 0: // error
+                            setForeground(new Color(0x660000));  // red
+                            setBackground(new Color(0xff9999));
+                            break;
+                        case 1: // success
+                            setForeground(new Color(0x00881C)); // green
+                            setBackground(new Color(0xCCFFCC));
+                            break;
+                        case 2: // warning not found
+                            setForeground(new Color(0xcc6600)); // orange
+                            setBackground(new Color(0xFFE9DA));
+                            break;
+                        case 3: // warning not found
+                            setForeground(new Color(0x003399)); // blue
+                            setBackground(new Color(0x99ccff));
+                            break;
+                        case 4: // warning not found
+                            setForeground(new Color(0xcc6600)); // other orange
+                            setBackground(new Color(0xffcc99));
+                            break;
+                        default:
+                            setForeground(defaultTableForeground);
+                            setBackground(defaultTableBackground);
+                            setFont(getFont().deriveFont(Font.PLAIN));
+                            break;
+                    }
+                }
+
+                return this;
+            }
+        };
+        tblBookList.getColumnModel().getColumn(1).setCellRenderer(cellRenderer);
+        tblBookList.repaint();
+    }
+
+    private void actionButtonsEnabler() {
+
+        boolean hasRow = tblBookList.getRowCount() > 1;
+        cmdRemoveAll.setEnabled(hasRow);
+        cmdRenameAll.setEnabled(hasRow);
+
+    }
+
+    private void adjustSecondColumn(JTable table, JScrollPane scrollPane, int initialTotalWidth) {
+        int tableCount = table.getColumnCount();
+        if (tableCount < 2) {
+            return;
+        }
+
+        TableColumnModel columnModel = table.getColumnModel();
+
+        // Total current width of all columns
+        int currentTotal = 0;
+        for (int i = 0; i < tableCount; i++) {
+            currentTotal += columnModel.getColumn(i).getWidth();
+        }
+
+        // Width of viewport excluding vertical scrollbar
+        int viewportWidth = scrollPane.getViewport().getWidth();
+        JScrollBar vsb = scrollPane.getVerticalScrollBar();
+        int vsbWidth = (vsb.isVisible()) ? vsb.getWidth() : 0;
+
+        // Maximum space we can stretch 2nd column
+        int targetTotal = Math.max(initialTotalWidth, viewportWidth - vsbWidth);
+
+        int extraSpace = targetTotal - currentTotal;
+
+        if (extraSpace > 0) {
+            // Stretch 2nd column only
+            TableColumn col2 = columnModel.getColumn(1);
+            col2.setPreferredWidth(col2.getPreferredWidth() + extraSpace);
+            table.revalidate();
+            table.repaint();
+        }
+    }
+
+    /* combobox utility methods */
+    //----------------------------------
+    private void loadLanguages() {
+        cboLanguage.setEditable(false);
+        ConfigXmlUtil.loadLanguages(document).forEach(cboLanguage::addItem);
+
+//        cboLanguage.addActionListener(e -> {
+//            LanguageItem li = (LanguageItem) cboLanguage.getSelectedItem();
+//            if (li != null) {
+//                System.out.println("Selected language ID = " + li.getId());
+//            }
+//        });
+    }
+
+    private void loadCategories() {
+        categories.addAll(ConfigXmlUtil.loadCategories(document));
+        categories.forEach(cboTopic::addItem);
+//        AutoCompleteComboBox.enable(cboTopic);
+    }
+
+    private void saveCategories() throws Exception {
+        ConfigXmlUtil.saveCategories(document, categories);
+    }
+
+    private void handleInput() {
+        
+        String input = topicEditor.getText();
+        if (input.isEmpty()) {
+            return;
+        }
+
+        cboTopic.showPopup();
+        // Find the first item that starts with the input
+        for (int i = 0; i < model.getSize(); i++) {
+            String item = model.getElementAt(i).toLowerCase();
+            if (item.startsWith(input.toLowerCase())) {
+                cboTopic.setSelectedIndex(i);
+                topicEditor.setText(input);
+                return;
+//                    break;
+            }
+        }
+
     }
 }
