@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/XML/XMLDocument.xml to edit this template
+-->
+<root>
+    <languages>
+        <language id="EN">English</language>
+        <language id="SA">Sanskrit</language>
+        <language id="ML">Malayalam</language>
+        <language id="TA">Tamil</language>
+        <language id="HI">Hindi</language>
+        <language id="AB">Abkhazian</language>
+        <language id="AA">Afar</language>
+        <language id="AF">Afrikaans</language>
+        <language id="AK">Akan</language>
+        <language id="SQ">Albanian</language>
+        <language id="AM">Amharic</language>
+        <language id="AR">Arabic</language>
+        <language id="AN">Aragonese</language>
+        <language id="HY">Armenian</language>
+        <language id="AS">Assamese</language>
+        <language id="AV">Avaric</language>
+        <language id="AE">Avestan</language>
+        <language id="AY">Aymara</language>
+        <language id="AZ">Azerbaijani</language>
+        <language id="BM">Bambara</language>
+        <language id="BA">Bashkir</language>
+        <language id="EU">Basque</language>
+        <language id="BE">Belarusian</language>
+        <language id="BN">Bengali</language>
+        <language id="BI">Bislama</language>
+        <language id="BS">Bosnian</language>
+        <language id="BR">Breton</language>
+        <language id="BG">Bulgarian</language>
+        <language id="MY">Burmese</language>
+        <language id="CA">Catalan, Valencian</language>
+        <language id="CH">Chamorro</language>
+        <language id="CE">Chechen</language>
+        <language id="NY">Chichewa, Chewa, Nyanja</language>
+        <language id="ZH">Chinese</language>
+        <language id="CU">Church Slavonic</language>
+        <language id="CV">Chuvash</language>
+        <language id="KW">Cornish</language>
+        <language id="CO">Corsican</language>
+        <language id="CR">Cree</language>
+        <language id="HR">Croatian</language>
+        <language id="CS">Czech</language>
+        <language id="DA">Danish</language>
+        <language id="DV">Divehi, Dhivehi, Maldivian</language>
+        <language id="NL">Dutch, Flemish</language>
+        <language id="DZ">Dzongkha</language>
+        <language id="EO">Esperanto</language>
+        <language id="ET">Estonian</language>
+        <language id="EE">Ewe</language>
+        <language id="FO">Faroese</language>
+        <language id="FJ">Fijian</language>
+        <language id="FI">Finnish</language>
+        <language id="FR">French</language>
+        <language id="FY">Western Frisian</language>
+        <language id="FF">Fulah</language>
+        <language id="GD">Gaelic, Scottish Gaelic</language>
+        <language id="GL">Galician</language>
+        <language id="LG">Ganda</language>
+        <language id="KA">Georgian</language>
+        <language id="DE">German</language>
+        <language id="EL">Greek, Modern (1453–)</language>
+        <language id="KL">Kalaallisut, Greenlandic</language>
+        <language id="GN">Guarani</language>
+        <language id="GU">Gujarati</language>
+        <language id="HT">Haitian, Haitian Creole</language>
+        <language id="HA">Hausa</language>
+        <language id="HE">Hebrew</language>
+        <language id="HZ">Herero</language>
+        <language id="HO">Hiri Motu</language>
+        <language id="HU">Hungarian</language>
+        <language id="IS">Icelandic</language>
+        <language id="IO">Ido</language>
+        <language id="IG">Igbo</language>
+        <language id="ID">Indonesian</language>
+        <language id="IA">Interlingua (IALA)</language>
+        <language id="IE">Interlingue, Occidental</language>
+        <language id="IU">Inuktitut</language>
+        <language id="IK">Inupiaq</language>
+        <language id="GA">Irish</language>
+        <language id="IT">Italian</language>
+        <language id="JA">Japanese</language>
+        <language id="JV">Javanese</language>
+        <language id="KN">Kannada</language>
+        <language id="KR">Kanuri</language>
+        <language id="KS">Kashmiri</language>
+        <language id="KK">Kazakh</language>
+        <language id="KM">Central Khmer</language>
+        <language id="KI">Kikuyu, Gikuyu</language>
+        <language id="RW">Kinyarwanda</language>
+        <language id="KY">Kyrgyz, Kirghiz</language>
+        <language id="KV">Komi</language>
+        <language id="KG">Kongo</language>
+        <language id="KO">Korean</language>
+        <language id="KJ">Kuanyama, Kwanyama</language>
+        <language id="KU">Kurdish</language>
+        <language id="LO">Lao</language>
+        <language id="LA">Latin</language>
+        <language id="LV">Latvian</language>
+        <language id="LI">Limburgan, Limburger, Limburgish</language>
+        <language id="LN">Lingala</language>
+        <language id="LT">Lithuanian</language>
+        <language id="LU">Luba-Katanga</language>
+        <language id="LB">Luxembourgish, Letzeburgesch</language>
+        <language id="MK">Macedonian</language>
+        <language id="MG">Malagasy</language>
+        <language id="MS">Malay</language>
+        <language id="MT">Maltese</language>
+        <language id="GV">Manx</language>
+        <language id="MI">Maori</language>
+        <language id="MR">Marathi</language>
+        <language id="MH">Marshallese</language>
+        <language id="MN">Mongolian</language>
+        <language id="NA">Nauru</language>
+        <language id="NV">Navajo, Navaho</language>
+        <language id="ND">North Ndebele</language>
+        <language id="NR">South Ndebele</language>
+        <language id="NG">Ndonga</language>
+        <language id="NE">Nepali</language>
+        <language id="NO">Norwegian</language>
+        <language id="NB">Norwegian Bokmål</language>
+        <language id="NN">Norwegian Nynorsk</language>
+        <language id="OC">Occitan</language>
+        <language id="OJ">Ojibwa</language>
+        <language id="OR">Oriya</language>
+        <language id="OM">Oromo</language>
+        <language id="OS">Ossetian, Ossetic</language>
+        <language id="PI">Pali</language>
+        <language id="PS">Pashto, Pushto</language>
+        <language id="FA">Persian</language>
+        <language id="PL">Polish</language>
+        <language id="PT">Portuguese</language>
+        <language id="PA">Punjabi, Panjabi</language>
+        <language id="QU">Quechua</language>
+        <language id="RO">Romanian, Moldavian, Moldovan</language>
+        <language id="RM">Romansh</language>
+        <language id="RN">Rundi</language>
+        <language id="RU">Russian</language>
+        <language id="SE">Northern Sami</language>
+        <language id="SM">Samoan</language>
+        <language id="SG">Sango</language>
+        <language id="SC">Sardinian</language>
+        <language id="SR">Serbian</language>
+        <language id="SN">Shona</language>
+        <language id="SD">Sindhi</language>
+        <language id="SI">Sinhala, Sinhalese</language>
+        <language id="SK">Slovak</language>
+        <language id="SL">Slovenian</language>
+        <language id="SO">Somali</language>
+        <language id="ST">Southern Sotho</language>
+        <language id="ES">Spanish, Castilian</language>
+        <language id="SU">Sundanese</language>
+        <language id="SW">Swahili</language>
+        <language id="SS">Swati</language>
+        <language id="SV">Swedish</language>
+        <language id="TL">Tagalog</language>
+        <language id="TY">Tahitian</language>
+        <language id="TG">Tajik</language>
+        <language id="TT">Tatar</language>
+        <language id="TE">Telugu</language>
+        <language id="TH">Thai</language>
+        <language id="BO">Tibetan</language>
+        <language id="TI">Tigrinya</language>
+        <language id="TO">Tonga (Tonga Islands)</language>
+        <language id="TS">Tsonga</language>
+        <language id="TN">Tswana</language>
+        <language id="TR">Turkish</language>
+        <language id="TK">Turkmen</language>
+        <language id="TW">Twi</language>
+        <language id="UG">Uighur, Uyghur</language>
+        <language id="UK">Ukrainian</language>
+        <language id="UR">Urdu</language>
+        <language id="UZ">Uzbek</language>
+        <language id="VE">Venda</language>
+        <language id="VI">Vietnamese</language>
+        <language id="VO">Volapük</language>
+        <language id="WA">Walloon</language>
+        <language id="CY">Welsh</language>
+        <language id="WO">Wolof</language>
+        <language id="XH">Xhosa</language>
+        <language id="II">Sichuan Yi, Nuosu</language>
+        <language id="YI">Yiddish</language>
+        <language id="YO">Yoruba</language>
+        <language id="ZA">Zhuang, Chuang</language>
+        <language id="ZU">Zulu</language>
+    </languages>
+    <categories>
+        <category>Accounting</category>
+        <category>Aitheehyam</category>
+        <category>C</category>
+        <category>C#</category>
+        <category>CAD</category>
+        <category>CPP</category>
+        <category>CSS</category>
+        <category>Database</category>
+        <category>Designing</category>
+        <category>Documentation</category>
+        <category>History</category>
+        <category>HTML</category>
+        <category>Java</category>
+        <category>JavaScript</category>
+        <category>Magazine</category>
+        <category>MFC</category>
+        <category>Novels</category>
+        <category>Poetry</category>
+        <category>Programming-General</category>
+        <category>Puranas</category>
+        <category>Python</category>
+        <category>Screenplay</category>
+        <category>Screenwriting</category>
+        <category>Shaasthraas</category>
+        <category>Stories</category>
+        <category>UI-Design</category>
+        <category>Upanishdas</category>
+        <category>VBA</category>
+        <category>Vedas</category>
+        <category>Visual-Basic</category>
+        <category>Visual-C</category>
+        <category>Visual-C#</category>
+        <category>Visual-C++</category>
+        <category>Visual-FoxPro</category>
+        <category>Windows-Programming</category>
+    </categories>
+</root>

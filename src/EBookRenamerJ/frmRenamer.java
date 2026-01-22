@@ -92,7 +92,7 @@ public class frmRenamer extends javax.swing.JFrame {
     int warningcount = 0;
     int initialTotalWidth = 0;
 
-    String appversion = "1.8.0";
+    String appversion = "1.8.2";
     Map<Integer, Integer> renameresult = new HashMap();
     Document document;
     Set<String> categories = new HashSet<>();

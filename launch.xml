@@ -26,12 +26,12 @@
     <maxVersion></maxVersion>
   </jre>
   <versionInfo>
-    <fileVersion>1.6.0.0</fileVersion>
-    <txtFileVersion>1.6.0.R1</txtFileVersion>
+    <fileVersion>1.8.0.0</fileVersion>
+    <txtFileVersion>1.8.0.R1</txtFileVersion>
     <fileDescription>J Soft EBook Renamer</fileDescription>
     <copyright>© J Soft Bharath, Palakkad, Kerala, India.</copyright>
-    <productVersion>1.6.0.0</productVersion>
-    <txtProductVersion>1.6.0.R1</txtProductVersion>
+    <productVersion>1.8.0.0</productVersion>
+    <txtProductVersion>1.8.0.R1</txtProductVersion>
     <productName>EBookRenamerJ</productName>
     <companyName>J Soft Bharath</companyName>
     <internalName>eBookRenamerJ</internalName>

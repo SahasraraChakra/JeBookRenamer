@@ -18,7 +18,7 @@ import java.util.*;
 
 public class ConfigXmlUtil {
 
-    private static final File XML_FILE = new File("config.xml");
+    private static final File XML_FILE = new File("jsebr_config.xml");
 
     public static Document loadDocument() throws Exception {
         DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
@@ -47,27 +47,48 @@ public class ConfigXmlUtil {
         }
         return list;
     }
-
+    
     public static void saveCategories(Document doc, Collection<String> categories) throws Exception {
         Node categoriesNode = doc.getElementsByTagName("categories").item(0);
 
-        // remove old
+        // Remove old children
         while (categoriesNode.hasChildNodes()) {
             categoriesNode.removeChild(categoriesNode.getFirstChild());
         }
 
-        // add unique, sorted
-        categories.stream()
-                .distinct()
-                .sorted(String.CASE_INSENSITIVE_ORDER)
-                .forEach(c -> {
-                    Element e = doc.createElement("category");
-                    e.setTextContent(c);
-                    categoriesNode.appendChild(e);
-                });
+        // Sort and add unique categories
+        List<String> sortedCategories = new ArrayList<>(new HashSet<>(categories));
+        sortedCategories.sort(String.CASE_INSENSITIVE_ORDER);
 
+        for (String c : sortedCategories) {
+            Element e = doc.createElement("category");
+            e.setTextContent(c);
+            categoriesNode.appendChild(e);
+        }
+
+        // Clean empty text nodes to prevent blank lines
+        removeEmptyTextNodes(doc);
+
+        // Save with pretty-printing; Transformer will handle newlines automatically
         Transformer tf = TransformerFactory.newInstance().newTransformer();
         tf.setOutputProperty(OutputKeys.INDENT, "yes");
+        tf.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
         tf.transform(new DOMSource(doc), new StreamResult(XML_FILE));
+    }
+
+    /**
+     * Recursively removes empty text nodes from the DOM to prevent extra blank
+     * lines
+     */
+    private static void removeEmptyTextNodes(Node node) {
+        NodeList children = node.getChildNodes();
+        for (int i = children.getLength() - 1; i >= 0; i--) {
+            Node child = children.item(i);
+            if (child.getNodeType() == Node.TEXT_NODE && child.getTextContent().trim().isEmpty()) {
+                node.removeChild(child);
+            } else if (child.getNodeType() == Node.ELEMENT_NODE) {
+                removeEmptyTextNodes(child);
+            }
+        }
     }
 }
