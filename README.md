@@ -22,6 +22,8 @@ _Here is a screenshot in Windows 11 machine with Java 23.0.2_
 
 <img width="986" height="593" alt="image" src="https://github.com/user-attachments/assets/914f3553-ebfd-454a-a9be-e6f3d398881e" />
 
+v 1.8.4
+<img width="1017" height="680" alt="image" src="https://github.com/user-attachments/assets/86533f84-d04f-4b95-b214-0c2f80c6ab19" />
 
 
 
