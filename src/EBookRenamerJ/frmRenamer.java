@@ -8,6 +8,7 @@
  */
 package EBookRenamerJ;
 
+import java.awt.BasicStroke;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Component;
@@ -92,7 +93,7 @@ public class frmRenamer extends javax.swing.JFrame {
     int warningcount = 0;
     int initialTotalWidth = 0;
 
-    String appversion = "1.8.2";
+    String appversion = "1.8.4";
     Map<Integer, Integer> renameresult = new HashMap();
     Document document;
     Set<String> categories = new HashSet<>();
@@ -155,6 +156,7 @@ public class frmRenamer extends javax.swing.JFrame {
         centerrenderer.setHorizontalAlignment(SwingConstants.CENTER);
         tblBookList.getColumnModel().getColumn(0).setCellRenderer(centerrenderer);
         tblBookList.setFillsViewportHeight(true);
+        scrollBookList.setBackground(defaultTableBackground);
 
         //  Calculate initial total width
         TableColumnModel columnModel = tblBookList.getColumnModel();
@@ -299,28 +301,19 @@ public class frmRenamer extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        paneHeader = new javax.swing.JPanel(){
+        paneHeader = new javax.swing.JPanel()
+        {
             int width;
             protected void paintComponent(Graphics g)
             {
                 super.paintComponent(g);
                 Graphics2D g2d = (Graphics2D) g;
-                g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                g2d.setColor(new Color(56, 102, 71));
+                g2d.setStroke(new BasicStroke(2.0f));
+                g2d.drawLine(0, 1, getWidth(), 1);
+                g2d.setStroke(new BasicStroke(1.0f));
+                g2d.drawLine(0, getHeight()-1, getWidth(), getHeight()-1);
 
-                try{
-                    width = headerBgImage.getWidth()>=getWidth()?
-                    headerBgImage.getWidth():
-                    getWidth();
-                    //draw Image
-                    g2d.drawImage(headerBgImage,
-                        0,
-                        0,
-                        getWidth(),
-                        getHeight(),
-                        null);
-                }
-                catch(Exception e){
-                }
             }
         }
         ;
@@ -393,47 +386,24 @@ public class frmRenamer extends javax.swing.JFrame {
         paneAction = new javax.swing.JPanel();
         cmdRenameSelected = new javax.swing.JButton();
         cmdRenameAll = new javax.swing.JButton();
-        paneStatus = new javax.swing.JPanel()
-        {
-
-            protected void paintComponent(Graphics g)
-            {
-                super.paintComponent(g);
-                Graphics2D g2d = (Graphics2D) g;
-                g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-
-                try{
-                    //Logo Image
-                    g2d.drawImage(footerBgImage,
-                        0,
-                        0,
-                        getWidth()+4,
-                        getHeight(),
-                        null);
-                }
-                catch(Exception e){
-                }
-            }
-        }
-        ;
+        paneStatus = new javax.swing.JPanel();
         lblStatus = new javax.swing.JLabel();
         lblCompany = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("E Book Renamer : J Soft Bharath ");
         setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
-        setMinimumSize(new java.awt.Dimension(1000, 600));
+        setMinimumSize(new java.awt.Dimension(1000, 640));
         setName("frmRenamer"); // NOI18N
-        setPreferredSize(new java.awt.Dimension(1000, 600));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowActivated(java.awt.event.WindowEvent evt) {
                 formWindowActivated(evt);
             }
         });
 
-        paneHeader.setBackground(new java.awt.Color(255, 153, 0));
+        paneHeader.setBackground(new java.awt.Color(110, 164, 126));
 
-        lblAppTitle.setForeground(new java.awt.Color(255, 255, 255));
+        lblAppTitle.setForeground(new java.awt.Color(252, 252, 252));
         lblAppTitle.setText("J Soft Bharath  |  E-Book Renamer");
 
         cmdOpenBook.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/icons/34-16.png"))); // NOI18N
@@ -490,7 +460,7 @@ public class frmRenamer extends javax.swing.JFrame {
             .addGroup(paneHeaderLayout.createSequentialGroup()
                 .addGap(16, 16, 16)
                 .addComponent(lblAppTitle)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 180, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 190, Short.MAX_VALUE)
                 .addComponent(cmdChooseFiles)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(cmdChooseFolder)
@@ -505,7 +475,7 @@ public class frmRenamer extends javax.swing.JFrame {
         paneHeaderLayout.setVerticalGroup(
             paneHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(paneHeaderLayout.createSequentialGroup()
-                .addGap(10, 10, 10)
+                .addGap(12, 12, 12)
                 .addGroup(paneHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(cmdRemoveSelected, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cmdRemoveAll, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -513,12 +483,10 @@ public class frmRenamer extends javax.swing.JFrame {
                     .addComponent(lblAppTitle)
                     .addComponent(cmdOpenBook, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cmdChooseFolder, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(10, 10, 10))
+                .addGap(12, 12, 12))
         );
 
         getContentPane().add(paneHeader, java.awt.BorderLayout.PAGE_START);
-
-        paneEntry.setBackground(new java.awt.Color(252, 252, 252));
 
         lblListHeader.setText("File(s) to Rename");
 
@@ -671,7 +639,7 @@ public class frmRenamer extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(paneEntryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(lblTitle)
-                                    .addComponent(txtTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE))
+                                    .addComponent(txtTitle, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(paneEntryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(lblAuthor)
@@ -709,7 +677,7 @@ public class frmRenamer extends javax.swing.JFrame {
                 .addGap(8, 8, 8)
                 .addComponent(lblListHeader)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollBookList, javax.swing.GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
+                .addComponent(scrollBookList, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
                 .addGap(14, 14, 14)
                 .addGroup(paneEntryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblLanguage)
@@ -783,24 +751,25 @@ public class frmRenamer extends javax.swing.JFrame {
             .addGroup(paneFolderChoiceLayout.createSequentialGroup()
                 .addGap(16, 16, 16)
                 .addComponent(chkCreateFolders)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(chkMoveToFolder)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtMoveToFolder, javax.swing.GroupLayout.DEFAULT_SIZE, 261, Short.MAX_VALUE)
+                .addComponent(txtMoveToFolder, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cmdBrowse)
-                .addGap(32, 32, 32))
+                .addGap(46, 46, 46))
         );
         paneFolderChoiceLayout.setVerticalGroup(
             paneFolderChoiceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(paneFolderChoiceLayout.createSequentialGroup()
                 .addGap(18, 18, 18)
-                .addGroup(paneFolderChoiceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(chkCreateFolders)
-                    .addComponent(chkMoveToFolder)
-                    .addComponent(txtMoveToFolder, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cmdBrowse, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(10, 10, 10))
+                .addGroup(paneFolderChoiceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(paneFolderChoiceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                        .addComponent(chkMoveToFolder)
+                        .addComponent(txtMoveToFolder, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cmdBrowse, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(chkCreateFolders))
+                .addGap(18, 18, 18))
         );
 
         paneActions.add(paneFolderChoice, java.awt.BorderLayout.CENTER);
@@ -843,11 +812,12 @@ public class frmRenamer extends javax.swing.JFrame {
                 .addGroup(paneActionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(cmdRenameAll, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cmdRenameSelected, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(14, 14, 14))
+                .addGap(12, 12, 12))
         );
 
         paneActions.add(paneAction, java.awt.BorderLayout.EAST);
 
+        paneStatus.setBackground(new java.awt.Color(240, 247, 253));
         paneStatus.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 16, 4, 16));
         paneStatus.setLayout(new java.awt.BorderLayout());
 
