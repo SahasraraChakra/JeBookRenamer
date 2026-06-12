@@ -11,8 +11,11 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
+import java.awt.font.TextAttribute;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 
@@ -27,7 +30,7 @@ public class EBookRenamer {
      */
     public static void main(String[] args) {
         try {
-	    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.put("ButtonUI", "ClassicXUI.ClassicXButtonUI"); // Use the fully qualified name if in a package
             UIManager.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             UIManager.put(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
@@ -46,15 +49,16 @@ public class EBookRenamer {
     private static void RegisterFonts() {
         try {
             // Load font from the "fonts" subfolder in the resources directory
-            InputStream customFontFile = EBookRenamer.class.getResourceAsStream("/resources/fonts/RedHatDisplay-Regular.ttf");
-            InputStream customBoldFontFile = EBookRenamer.class.getResourceAsStream("/resources/fonts/RedHatDisplay-Bold.ttf");
+            InputStream customFontFile = EBookRenamer.class.getResourceAsStream("/resources/fonts/DMSans-Regular.ttf");
+            InputStream customBoldFontFile = EBookRenamer.class.getResourceAsStream("/resources/fonts/DMSans-Bold.ttf");
 
-            
+//            Font derivedFont = Font.getFont(attributes);
             // Create font
-            Font customFont = Font.createFont(Font.TRUETYPE_FONT, customFontFile).deriveFont(Font.PLAIN,12f);
-            Font customBoldFont = Font.createFont(Font.TRUETYPE_FONT, customBoldFontFile).deriveFont(Font.BOLD,12f);
-//	    System.out.println(customFont.getName());
-//	    System.out.println(customBoldFont.getName());
+            Font customFont = Font.createFont(Font.TRUETYPE_FONT, customFontFile).deriveFont(Font.PLAIN, 12f);
+            Font customBoldFont = Font.createFont(Font.TRUETYPE_FONT, customBoldFontFile).deriveFont(Font.PLAIN, 12f);
+
+	    System.out.println(customFont.getName());
+	    System.out.println(customBoldFont.getName());
 
             // Register the font with GraphicsEnvironment
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -62,9 +66,9 @@ public class EBookRenamer {
             ge.registerFont(customBoldFont);
 
             UIDefaults uidefaults = UIManager.getDefaults();
-            
-            uidefaults.put("regFont",customFont);
-            uidefaults.put("boldFont",customBoldFont);
+
+            uidefaults.put("regFont", customFont);
+            uidefaults.put("boldFont", customBoldFont);
 
             uidefaults.put("Label.font", customFont);
             uidefaults.put("Button.font", customFont);

@@ -122,7 +122,7 @@ public class frmRenamer extends javax.swing.JFrame {
         //  Font Setup        
         customFont = UIManager.getFont("regFont");
         boldFont = UIManager.getFont("boldFont");
-        headerFont = boldFont.deriveFont(20f);
+        headerFont = boldFont.deriveFont(22f);
         metrics = new Canvas().getFontMetrics(customFont);
 
         //  Table Color Setup
