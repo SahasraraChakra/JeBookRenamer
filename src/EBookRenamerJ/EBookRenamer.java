@@ -57,8 +57,8 @@ public class EBookRenamer {
             Font customFont = Font.createFont(Font.TRUETYPE_FONT, customFontFile).deriveFont(Font.PLAIN, 12f);
             Font customBoldFont = Font.createFont(Font.TRUETYPE_FONT, customBoldFontFile).deriveFont(Font.PLAIN, 12f);
 
-	    System.out.println(customFont.getName());
-	    System.out.println(customBoldFont.getName());
+	    // System.out.println(customFont.getName());
+	    // System.out.println(customBoldFont.getName());
 
             // Register the font with GraphicsEnvironment
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
