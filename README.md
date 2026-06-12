@@ -23,6 +23,9 @@ _Here is a screenshot in Windows 11 machine with Java 23.0.2_
 <img width="986" height="593" alt="image" src="https://github.com/user-attachments/assets/914f3553-ebfd-454a-a9be-e6f3d398881e" />
 
 v 1.8.4
+* Removed Image backgrounds and added flat color backgrounds
+* Changed UI Fonts to DM Sans from Google for better UI Look
+
 <img width="1017" height="680" alt="image" src="https://github.com/user-attachments/assets/cc997118-a21c-42a6-bf6d-e2f36d9fc91d" />
 
 
